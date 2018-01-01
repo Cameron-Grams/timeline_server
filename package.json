@@ -1,0 +1,26 @@
+{
+  "name": "timeline_server",
+  "version": "1.0.0",
+  "description": "Server for the Timeline",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Cameron-Grams/timeline_server.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Cameron-Grams/timeline_server/issues"
+  },
+  "homepage": "https://github.com/Cameron-Grams/timeline_server#readme",
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "express": "^4.16.2",
+    "node": "^9.3.0",
+    "nodemon": "^1.14.7"
+  }
+}
