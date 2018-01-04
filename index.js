@@ -8,10 +8,23 @@ const app = express();
 
 app.use(bodyParser.json());
 
-app.get( '/myData', ( req, res ) => {
-    return( res.json( myData ) );
+/* Middlewares */
+// CORS
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+    res.header('Access-Control-Allow-Headers', 'Content-Type,Authorization');
+    next();
+});
+
+
+app.get( '/users', ( req, res ) => {
+    return( res.json( myData.users ) );
 })
 
+app.get( '/timelines', ( req, res ) => {
+    return( res.json( myData.timelines ) );
+})
 let server;
 
 function runServer( port=PORT ) {
