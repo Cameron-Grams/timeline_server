@@ -2,15 +2,19 @@ const bodyParser = require('body-parser');
 const express = require('express');
 
 const {PORT, } = require('./config');
-const { myData } = require( './modelData' );
+const { myData } = require( './data/modelData' );
 
 const app = express();
 
 app.use(bodyParser.json());
 
-app.get( '/myData', ( req, res ) => {
-    return( res.json( myData ) );
-})
+app.get( '/users', ( req, res ) => {
+    return( res.json( myData.users ) );
+} )
+
+app.get( '/timelines', ( req, res ) => {
+    return( res.json( myData.timelines ) );
+} )
 
 let server;
 
