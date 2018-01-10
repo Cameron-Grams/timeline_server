@@ -1,4 +1,4 @@
-const singleEntry = {
+ const singleEntry = {
     when: new Date(),
     where: 'new york',
     who: 'Anthony Bourdain',
@@ -18,14 +18,14 @@ const timelines = [
             why: 'improved mainstream music'
         },
         {
-            when: new Date(),
+            when: new Date() + 100,
             where: 'new york',
             who: 'Ramones',
             what: 'brought Punk Rock Mainstream',
             why: 'improved mainstream music'
         },
         {
-            when: new Date(),
+            when: new Date() + 200,
             where: 'new york',
             who: 'Ramones',
             what: 'brought Punk Rock Mainstream',
@@ -45,14 +45,14 @@ const timelines = [
                 why: 'I am hungry'
             },
             {
-                when: new Date(),
+                when: new Date() + 100,
                 where: 'new york',
                 who: 'Anthony Bourdain',
                 what: 'brought food culture mainstream',
                 why: 'I am hungry'
             },
             {
-                when: new Date(),
+                when: new Date() + 200,
                 where: 'new york',
                 who: 'Anthony Bourdain',
                 what: 'brought food culture mainstream',
