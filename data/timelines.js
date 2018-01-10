@@ -62,4 +62,4 @@ const timelines = [
     }
 ];
 
-module.exports = { timelines }; 
+module.exports = timelines; 

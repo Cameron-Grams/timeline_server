@@ -13,4 +13,4 @@ const users = [
       password: 'pwrdpwrdpwrd' },
 ];
 
-module.exports = { users }; 
+module.exports = users; 
