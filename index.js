@@ -2,8 +2,8 @@ const bodyParser = require('body-parser');
 const express = require('express');
 
 const {PORT, } = require('./config');
-const { timelines } = require( './data/timelines' );
-const { users } = require( './data/users' );
+const timelines = require( './data/timelines' );
+const users = require( './data/users' );
 
 const app = express();
 
