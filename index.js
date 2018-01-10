@@ -7,7 +7,7 @@ const { myData } = require( './data/modelData' );
 const app = express();
 
 app.use(bodyParser.json());
-
+  
 app.use(function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
@@ -22,6 +22,7 @@ app.get( '/users', ( req, res ) => {
 app.get( '/timelines', ( req, res ) => {
     return( res.json( myData.timelines ) );
 } )
+
 
 let server;
 
