@@ -2,7 +2,8 @@ const bodyParser = require('body-parser');
 const express = require('express');
 
 const {PORT, } = require('./config');
-const { myData } = require( './data/modelData' );
+const { timelines } = require( './data/timelines' );
+const { users } = require( './data/users' );
 
 const app = express();
 
@@ -16,11 +17,11 @@ app.use(function (req, res, next) {
 });
 
 app.get( '/users', ( req, res ) => {
-    return( res.json( myData.users ) );
+    return( res.json( users ) );
 } )
 
 app.get( '/timelines', ( req, res ) => {
-    return( res.json( myData.timelines ) );
+    return( res.json( timelines ) );
 } )
 
 
