@@ -16,14 +16,9 @@ app.use(function (req, res, next) {
     next();
 });
 
-app.get( '/users', ( req, res ) => {
-    return( res.json( users ) );
-} )
+app.get( '/users', ( req, res ) => res.json( users ) );
 
-app.get( '/timelines', ( req, res ) => {
-    return( res.json( timelines ) );
-} )
-
+app.get( '/timelines', ( req, res ) => res.json( timelines ) );
 
 let server;
 
