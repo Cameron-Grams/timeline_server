@@ -1,4 +1,4 @@
-export default FinancialDateEntries = [   
+const FinancialDateEntries = [   
 
 {  
 entryId: 1,
@@ -34,7 +34,7 @@ source: [ 'http://eh.net/encyclopedia/a-history-of-futures-trading-in-the-united
     entryId: 4,
 title: 'Panic of 1907',
 what: 'Attempt by Heinze family and Knickerbocker Trust to corner the copper market led to a run on the banks due to a loss of investor confidence',
-when: { year: 1907, month: 'October', day: 'none' } 
+when: { year: 1907, month: 'October', day: 'none' },
 who: [ 'Otto Heinze',  'Knickerbocker Trust' ],
 where: 'New York',
 why: 'The attempt to corner cooper market was based on leveraged purchase of short sales of copper; once Otto Heinze was unable to meet his leveraged obligations the loss of confidence in financial institutions led to a run on the banks as people tried to secure their money',
@@ -112,7 +112,7 @@ source: [ 'https://www.reuters.com/article/us-usa-cftc-digitalcurrency/ledgerx-g
 }
 ];
 
-
+module.exports = { FinancialDateEntries }; 
 
 
 

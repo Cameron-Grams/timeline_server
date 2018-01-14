@@ -1,4 +1,4 @@
-import FinancialDateEntries from './financialDateEntries';
+const { FinancialDateEntries } = require( './financialDateEntries' );
 
 const dateEntry = {
     month: 0,
