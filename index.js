@@ -2,9 +2,8 @@ const bodyParser = require('body-parser');
 const express = require('express');
 
 const {PORT, } = require('./config');
-const timelines = require( './data/timelines' );
-const users = require( './data/users' );
-
+const timelineRouter = require( './routers/timelineRouter' );
+const usersRouter = require( './routers/usersRouter' ); 
 const app = express();
 
 app.use(bodyParser.json());
@@ -16,9 +15,10 @@ app.use(function (req, res, next) {
     next();
 });
 
-app.get( '/users', ( req, res ) => res.json( users ) );
+app.use( '/api', usersRouter );
 
-app.get( '/timelines', ( req, res ) => res.json( timelines ) );
+
+app.use( '/api', timelineRouter );
 
 let server;
 

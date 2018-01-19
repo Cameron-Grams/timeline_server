@@ -8,16 +8,16 @@ const express = require('express');
 const router = express.Router();
 // const jsonParser = bodyParser.json();
  
-const timeline = require( '../data/timelines' ); 
+const users = require( '../data/users' ); 
 
 //two data models exported models folder
 // const { User } = require( './models/user' );
 
 //
 //route to register a user and create the initial user db entry; from register-logic.js
-router.route('/timelines')
+router.route('/users')
     .get( ( req, res ) => {  
-       return res.json( timeline );  
+       return res.json( users );  
 });
    
 module.exports = router;
