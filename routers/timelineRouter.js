@@ -13,7 +13,6 @@ const timeline = require( '../data/timelines' );
 //two data models exported models folder
 // const { User } = require( './models/user' );
 
-//
 //route to register a user and create the initial user db entry; from register-logic.js
 router.route('/timelines')
     .get( ( req, res ) => {  
