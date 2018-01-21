@@ -16,11 +16,12 @@ const { JudoDateEntries } = require( '../data/judoTimeline' );
 // const { User } = require( './models/user' );
 
 //route to register a user and create the initial user db entry; from register-logic.js
+/*
 router.route( '/timelines' )
     .get( ( req, res ) => {
         return res.json( timelines );
     } );
-
+*/
 router.route('/timelines/1')
     .get( ( req, res ) => {  
         console.log( ' in response ' );

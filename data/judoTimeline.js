@@ -1,4 +1,7 @@
-const JudoDateEntries = [   
+const JudoDateEntries = {
+    title: 'History of Judo',
+    id: 456,
+    entries: [   
 
 {  
 entryId: 1,
@@ -33,7 +36,7 @@ where: 'Berlin, Germany',
 content: 'Practice and competition in Judo spreads',
 source: [ '' ]
 }
-];
+] };
 
 module.exports = { JudoDateEntries }; 
 

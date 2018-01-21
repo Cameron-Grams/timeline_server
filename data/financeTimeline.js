@@ -1,4 +1,7 @@
-const FinancialDateEntries = [   
+const FinancialDateEntries = {
+    title: 'financial history',
+    id: 123,
+    entries: [   
 
 {  
 entryId: 1,
@@ -121,7 +124,7 @@ where: [ 'Washington DC ( US Commodities Futures Trading Commission )', 'New Yor
 content: 'This opens the way for blockchain\'s use in recording derivatives contracts',
 source: [ 'https://www.reuters.com/article/us-usa-cftc-digitalcurrency/ledgerx-gets-u-s-approval-for-derivatives-on-digital-currencies-idUSKBN1A92FZ' ]
 }
-];
+] };
 
 module.exports = { FinancialDateEntries }; 
 
