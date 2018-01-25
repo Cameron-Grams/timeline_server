@@ -1,5 +1,6 @@
 const user1 = 
-    { id: '123',
+    { token: "somestring",  
+      id: '123',
       name: 'Jo',
       email: 'Jo@here.com',
       password: 'demo',
