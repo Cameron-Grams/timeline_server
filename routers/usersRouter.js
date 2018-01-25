@@ -15,9 +15,11 @@ const user1 = require( '../data/user1' );
 
 //
 //route to register a user and create the initial user db entry; from register-logic.js
-router.route('/users/1')
-    .get( ( req, res ) => {  
-       return res.json( user1 );  
+router.route('/users/login')
+    .post( ( req, res ) => {  
+        if ( req.body.userPassword === user1.password ){
+            return res.json( user1 ); 
+        }; 
 });
    
 module.exports = router;
