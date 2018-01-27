@@ -22,13 +22,13 @@ router.route( '/timelines' )
         return res.json( timelines );
     } );
 */
-router.route('/timelines/1')
+router.route('/timelines/2')
     .get( ( req, res ) => {  
         console.log( ' in response ' );
         return res.json( FinancialDateEntries );  
 });
 
-router.route('/timelines/2')
+router.route('/timelines/1')
     .get( ( req, res ) => {  
        return res.json( JudoDateEntries );  
 });
