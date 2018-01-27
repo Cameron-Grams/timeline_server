@@ -5,8 +5,15 @@ const user1 =
       email: 'Jo@here.com',
       password: 'demo',
       analysis: [
-        'financial history',
-        'History of Judo'
+        {        
+
+          title: 'History of Judo',
+          id: 1
+        },
+        {
+          id: 2, 
+          title: "Financial History of the United States"
+        }
       ] }
  
 
