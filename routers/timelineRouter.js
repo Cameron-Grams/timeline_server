@@ -22,15 +22,26 @@ router.route( '/timelines' )
         return res.json( timelines );
     } );
 */
-router.route('/timelines/2')
-    .get( ( req, res ) => {  
-        return res.json( FinancialDateEntries );  
-});
 
 router.route('/timelines/1')
     .get( ( req, res ) => {  
        return res.json( JudoDateEntries );  
 });
+
+router.route('/timelines/2')
+    .get( ( req, res ) => {  
+        return res.json( FinancialDateEntries );  
+});
+
+router.route( '/timelines/3' )
+    .post( ( req, res ) => {
+        const dataObj = FinancialDateEntries;
+
+        dataObj.entries.push( req.body );
+        console.log( '[ timelineRouter ] results ', dataObj.entries );
+
+        return res.json( req.body.title ); 
+    });
      
 module.exports = router;
 
