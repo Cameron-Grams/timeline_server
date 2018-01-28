@@ -24,7 +24,6 @@ router.route( '/timelines' )
 */
 router.route('/timelines/2')
     .get( ( req, res ) => {  
-        console.log( ' in response ' );
         return res.json( FinancialDateEntries );  
 });
 
