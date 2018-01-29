@@ -35,12 +35,8 @@ router.route('/timelines/2')
 
 router.route( '/timelines/3' )
     .post( ( req, res ) => {
-        const dataObj = FinancialDateEntries;
-
-        dataObj.entries.push( req.body );
-        console.log( '[ timelineRouter ] results ', dataObj.entries );
-
-        return res.json( req.body.title ); 
+        console.log( '[ timelineRouter ] results ', req.body );
+        return res.status( 200 ).json( req.body ); 
     });
      
 module.exports = router;
