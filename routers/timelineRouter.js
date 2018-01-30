@@ -22,6 +22,11 @@ router.route( '/timelines' )
         return res.json( timelines );
     } );
 */
+router.route('/timelines/new')
+    .post( ( req, res ) => {  
+       return res.status( 200 ).json( req.body );  
+});
+
 
 router.route('/timelines/1')
     .get( ( req, res ) => {  

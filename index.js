@@ -17,7 +17,6 @@ app.use(function (req, res, next) {
 
 app.use( '/api', usersRouter );
 
-
 app.use( '/api', timelineRouter );
 
 let server;
