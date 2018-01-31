@@ -21,14 +21,34 @@ router.route('/users/register')
         return res.status(200).json( req.body ); 
 });
 
+const auth1 = ( userReqBody ) => {
+    if ( userReqBody.password === user1.password && userReqBody.email === user1.email ){
+        return user1;
+    }
+    return false; 
+}
 
-
+const auth1 = ( userReqBody ) => {
+    if ( userReqBody.password === user2.password && userReqBody.email === user2.email ){
+        return user2;
+    }
+    return false; 
+}
 
 router.route('/users/login')
     .post( ( req, res ) => {  
-        if ( req.body.userPassword === user1.password ){
-            return res.json( user1 ); 
+        if ( auth1( req.body ) ){
+            return res.json( {
+                user1
+            } ); 
         }; 
-});
+        if ( auth2( req.body ) ){
+            return res.json( user2 ); 
+        }; 
+        return false; 
+    })
+    .catch( ( res ) => { 
+        return res.status( 400 ) } 
+    );
    
 module.exports = router;
