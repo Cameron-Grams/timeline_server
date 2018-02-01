@@ -1,3 +1,4 @@
+
 // const mongoose = require('mongoose');
 const express = require('express');
 // const bodyParser = require('body-parser');
@@ -9,7 +10,7 @@ const router = express.Router();
 // const jsonParser = bodyParser.json();
  
 const user1 = require( '../data/user1' ); 
-
+const user2 = require( '../data/user2' ); 
 //two data models exported models folder
 // const { User } = require( './models/user' );
 
@@ -22,14 +23,14 @@ router.route('/users/register')
 });
 
 const auth1 = ( userReqBody ) => {
-    if ( userReqBody.password === user1.password && userReqBody.email === user1.email ){
+    if ( userReqBody.userPassword === user1.password && userReqBody.userEmail === user1.email ){
         return user1;
     }
     return false; 
 }
 
-const auth1 = ( userReqBody ) => {
-    if ( userReqBody.password === user2.password && userReqBody.email === user2.email ){
+const auth2 = ( userReqBody ) => {
+    if ( userReqBody.userPassword === user2.password && userReqBody.userEmail === user2.email ){
         return user2;
     }
     return false; 
@@ -37,18 +38,16 @@ const auth1 = ( userReqBody ) => {
 
 router.route('/users/login')
     .post( ( req, res ) => {  
+        console.log( req.body ); 
         if ( auth1( req.body ) ){
-            return res.json( {
-                user1
+           return res.json( {
+                ...user1
             } ); 
         }; 
         if ( auth2( req.body ) ){
             return res.json( user2 ); 
         }; 
         return false; 
-    })
-    .catch( ( res ) => { 
-        return res.status( 400 ) } 
-    );
-   
+    });
+  
 module.exports = router;
