@@ -38,7 +38,6 @@ const auth2 = ( userReqBody ) => {
 
 router.route('/users/login')
     .post( ( req, res ) => {  
-        console.log( req.body ); 
         if ( auth1( req.body ) ){
            return res.json( {
                 ...user1
@@ -49,5 +48,33 @@ router.route('/users/login')
         }; 
         return false; 
     });
+
+
+const auth3 = ( userReqBody ) => {
+    if ( userReqBody.token === user1.token ){
+        return user1;
+    }
+    return false; 
+}
+
+const auth4 = ( userReqBody ) => {
+    if ( userReqBody.token === user2.token ){
+        return user2;
+    }
+    return false; 
+}
+router.route( '/users/basicInfo' )
+    .post( ( req, res ) => {
+        if ( auth3( req.body ) ){
+           return res.json( {
+                ...user1
+            } ); 
+        }; 
+        if ( auth4( req.body ) ){
+            return res.json( user2 ); 
+        }; 
+        return false; 
+
+    })
   
 module.exports = router;
