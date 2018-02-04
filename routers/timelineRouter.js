@@ -1,3 +1,4 @@
+
 // const mongoose = require('mongoose');
 const express = require('express');
 // const bodyParser = require('body-parser');
@@ -11,37 +12,32 @@ const router = express.Router();
 const timelines = require( '../data/older/timelines' );
 const { FinancialDateEntries } = require( '../data/financeTimeline' ); 
 const { JudoDateEntries } = require( '../data/judoTimeline' ); 
+const { Timeline3 } = require( '../data/timeline3' ); 
 
-//two data models exported models folder
-// const { User } = require( './models/user' );
+const timelineIndex = {
+    1: JudoDateEntries,
+    2: FinancialDateEntries,
+    3: Timeline3
+}
 
-//route to register a user and create the initial user db entry; from register-logic.js
-/*
-router.route( '/timelines' )
-    .get( ( req, res ) => {
-        return res.json( timelines );
-    } );
-*/
-router.route('/timelines/new')
+router.route('/timelines/new-timeline' ) 
     .post( ( req, res ) => {  
        return res.status( 200 ).json( req.body );  
 });
 
 
-router.route('/timelines/1')
-    .get( ( req, res ) => {  
-       return res.json( JudoDateEntries );  
+router.route('/timelines/new-entry/:timelineId')
+    .post( ( req, res ) => {  
+        console.log( '[ timelineRouter, new entry ] params ', req.params ); 
+       return res.status( 200 ).json( req.body );  
 });
 
-router.route('/timelines/2')
-    .get( ( req, res ) => {  
-        return res.json( FinancialDateEntries );  
-});
 
-router.route( '/timelines/3' )
+
+router.route( `/timelines` )
     .post( ( req, res ) => {
-        console.log( '[ timelineRouter ] results ', req.body );
-        return res.status( 200 ).json( req.body ); 
+        const result = timelineIndex[ req.body.index ]; 
+        return res.status( 200 ).json( result ); 
     });
      
 module.exports = router;

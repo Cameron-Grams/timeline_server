@@ -1,4 +1,4 @@
-const Timeline3DateEntries = {
+const Timeline3 = {
     title: 'Timeline 3',
     id: 3,
     entries: [   
@@ -39,7 +39,7 @@ source: [ '' ]
   ]
 };
 
-module.exports = { JudoDateEntries }; 
+module.exports = { Timeline3 }; 
 
 
 /*
