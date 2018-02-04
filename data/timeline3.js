@@ -4,7 +4,7 @@ const Timeline3 = {
     entries: [   
 
 {  
-entryId: 1,
+entryId: 2,
 title: 'Timeline 3, Entry 1',
 what: 'Timeline 3, Entry 1',
 when: { year: 1882, day:'none', month: 'none' }, 
@@ -15,7 +15,7 @@ content: 'Timeline 3, Entry 1',
 source: [ '' ]
 },
 {  
-entryId: 1,
+entryId: 3,
 title: 'Timeline 3, Entry 2',
 what: 'Timeline 3, Entry 2',
 when: { year: 1882, day:'none', month: 'none' }, 

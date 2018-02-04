@@ -22,13 +22,18 @@ const timelineIndex = {
 
 router.route('/timelines/new-timeline' ) 
     .post( ( req, res ) => {  
+        console.log( '[ timelineRouter ] new timeline: ', req.body ); 
        return res.status( 200 ).json( req.body );  
 });
 
 
 router.route('/timelines/new-entry/:timelineId')
     .post( ( req, res ) => {  
-        console.log( '[ timelineRouter, new entry ] params ', req.params ); 
+       const neededIndexParam = req.params; 
+       const neededNumber = neededIndexParam.timelineId;
+       const workingTimeline = timelineIndex[ neededNumber ]; 
+       workingTimeline.entries.push( req.body ); 
+       console.log( '[ timelineRouter ] output timeline ', workingTimeline );
        return res.status( 200 ).json( req.body );  
 });
 
