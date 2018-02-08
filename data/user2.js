@@ -2,7 +2,7 @@ const user2 =
       { 
         token: "someOtherString", 
         id: '789',
-        name: 'Jolene',
+        name: 'DEMO-2',
         email: 'demo2@here.com',
         password: 'demo2',
         analysis: [

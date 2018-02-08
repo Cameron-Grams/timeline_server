@@ -1,7 +1,7 @@
 const user1 = 
     { token: "somestring",  
       id: '123',
-      name: 'Jo',
+      name: 'DEMO',
       email: 'demo@here.com',
       password: 'demo',
       analysis: [
