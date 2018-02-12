@@ -8,6 +8,8 @@ const express = require('express');
 
 const router = express.Router();
 // const jsonParser = bodyParser.json();
+
+const { order } = require( '../Helpers/order' );
  
 const timelines = require( '../data/older/timelines' );
 const { FinancialDateEntries } = require( '../data/financeTimeline' ); 
@@ -32,16 +34,16 @@ router.route('/timelines/new-entry/:timelineId')
        const neededIndexParam = req.params; 
        const neededNumber = neededIndexParam.timelineId;
        const workingTimeline = timelineIndex[ neededNumber ]; 
-       workingTimeline.entries.push( req.body ); 
-       console.log( '[ timelineRouter ] updating ', neededIndexParam, ' with ', req.body ); 
-       return res.status( 200 ).json( req.body );  
+       const returnTimeline = order.orderEntryInput( workingTimeline, req.body ); 
+       return res.status( 200 ).json( returnTimeline );  
 });
 
 
 
 router.route( `/timelines` )
     .post( ( req, res ) => {
-        const result = timelineIndex[ req.body.index ]; 
+        const requestTimeline = timelineIndex[ req.body.index ]; 
+        const result = order.orderTimelines( requestTimeline ); 
         return res.status( 200 ).json( result ); 
     });
      
