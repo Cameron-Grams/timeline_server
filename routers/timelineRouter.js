@@ -25,9 +25,9 @@ router.route('/timelines/new-entry/:timelineId')
 });
 
 
-router.route('/timelines/update-entry/:timelineId')
+router.route('/timelines/:timelineId/:entryId')
     .patch( ( req, res ) => {  
-        const neededIndexParam = req.params; 
+        const { timelineId, entryId } = req.params;
         const neededNumber = neededIndexParam.timelineId;
         const workingTimeline = timelineIndex[ neededNumber ]; 
         const workingArray = workingTimeline.entries;
@@ -35,16 +35,14 @@ router.route('/timelines/update-entry/:timelineId')
         let targetIndex;
         for ( let i = 0; i < workingArray.length; i++ ){
             if ( workingArray[ i ].entryId === req.body.entryId ){
-                () => { 
-                workingArray[ i ].title = req.body.entryId,
-                workingArray[ i ].what = req.body.entryId,
-                workingArray[ i ].date = req.body.entryId,
-                workingArray[ i ].dateObject = req.body.entryId,
-                workingArray[ i ].who = req.body.entryId,
-                workingArray[ i ].where = req.body.entryId,
+                workingArray[ i ].title = req.body.title,
+                workingArray[ i ].what = req.body.what,
+                workingArray[ i ].date = req.body.date,
+                workingArray[ i ].dateObject = req.body.dateObject,
+                workingArray[ i ].who = req.body.who,
+                workingArray[ i ].where = req.body.where,
                 workingArray[ i ].content = req.body.content,
                 workingArray[ i ].source = req.body.source
-                }
             }
         }
 
