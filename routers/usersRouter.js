@@ -9,6 +9,7 @@ const express = require('express');
 const router = express.Router();
 // const jsonParser = bodyParser.json();
  
+const timelinesIndex = require( '../Helpers/timelineIndex' ); 
 const user1 = require( '../data/user1' ); 
 const user2 = require( '../data/user2' ); 
 //two data models exported models folder
@@ -77,4 +78,25 @@ router.route( '/users/basicInfo' )
 
     })
   
+router.route('/users/new-timeline' ) 
+    .post( ( req, res ) => {  
+        const keys = Object.keys( timelinesIndex ); 
+        const newIndex = keys.length + 1;
+        const newTimeline = {
+            title: req.body.timelineTitle,
+            id: newIndex,
+            entries: []
+        };
+
+        const result = {
+            ...timelinesIndex,
+            };
+
+        result[ newIndex ] = newTimeline;
+
+        return res.status( 200 ).json( { title: req.body.timelineTitle, id: newIndex } );  
+});
+
+
+
 module.exports = router;

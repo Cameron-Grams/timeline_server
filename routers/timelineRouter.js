@@ -12,30 +12,43 @@ const router = express.Router();
 const { order } = require( '../Helpers/order' );
  
 const timelines = require( '../data/older/timelines' );
-const { FinancialDateEntries } = require( '../data/financeTimeline' ); 
-const { JudoDateEntries } = require( '../data/judoTimeline' ); 
-const { Timeline3 } = require( '../data/timeline3' ); 
-
-const timelineIndex = {
-    1: JudoDateEntries,
-    2: FinancialDateEntries,
-    3: Timeline3
-}
-
-router.route('/timelines/new-timeline' ) 
-    .post( ( req, res ) => {  
-        console.log( '[ timelineRouter ] new timeline: ', req.body ); 
-       return res.status( 200 ).json( req.body );  
-});
-
+const timelineIndex = require( '../Helpers/timelineIndex' ); 
 
 router.route('/timelines/new-entry/:timelineId')
     .post( ( req, res ) => {  
+        console.log( ' hit new entry ' ); 
        const neededIndexParam = req.params; 
        const neededNumber = neededIndexParam.timelineId;
        const workingTimeline = timelineIndex[ neededNumber ]; 
        const returnTimeline = order.orderEntryInput( workingTimeline, req.body ); 
        return res.status( 200 ).json( returnTimeline );  
+});
+
+
+router.route('/timelines/:timelineId/:entryId')
+    .patch( ( req, res ) => {  
+        const { timelineId, entryId } = req.params;
+        const neededNumber = neededIndexParam.timelineId;
+        const workingTimeline = timelineIndex[ neededNumber ]; 
+        const workingArray = workingTimeline.entries;
+
+        let targetIndex;
+        for ( let i = 0; i < workingArray.length; i++ ){
+            if ( workingArray[ i ].entryId === req.body.entryId ){
+                workingArray[ i ].title = req.body.title,
+                workingArray[ i ].what = req.body.what,
+                workingArray[ i ].date = req.body.date,
+                workingArray[ i ].dateObject = req.body.dateObject,
+                workingArray[ i ].who = req.body.who,
+                workingArray[ i ].where = req.body.where,
+                workingArray[ i ].content = req.body.content,
+                workingArray[ i ].source = req.body.source
+            }
+        }
+
+        const returnTimeline = order.orderEntryInput( workingTimeline, req.body ); 
+        console.log( '[ timelineRouter ] updated TL: ', returnTimeline ); 
+        return res.status( 200 ).json( returnTimeline );  
 });
 
 
