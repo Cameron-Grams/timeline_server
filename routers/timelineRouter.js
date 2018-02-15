@@ -11,24 +11,14 @@ const jsonParser = bodyParser.json();
 const { order } = require( '../Helpers/order' );
 const { Timeline } = require( '../models/timelineModel' ); 
  
-const timelines = require( '../data/older/timelines' );
-const timelineIndex = require( '../Helpers/timelineIndex' ); 
 
-router.route('/timelines/new-entry/:timelineId')
+router.route('/timelines/:timelineId')
     .post( ( req, res ) => { 
-        Timeline.findOne( {
-            timelineId: req.params.timelineId
-        })
-        .then( timeline => {
-            const oldTimeline = timeline;
 
-            const dateArray = req.body.date.split( '/' );
-            const recordDate = new Date( dateArray[ 2 ], dateArray[ 0 ], dateArray[ 1 ] ); 
+        const dateArray = req.body.date.split( '/' );
+        const recordDate = new Date( dateArray[ 2 ], dateArray[ 0 ], dateArray[ 1 ] ); 
 
-            const numberEntries = Object.keys( timeline.Entries ).length; 
-
-            const newEntry = {
-                entryId: numberEntries + 1,
+        const newEntry = {
                 what: req.body.what,
                 dateObject: recordDate,
                 date: req.body.date,
@@ -37,6 +27,18 @@ router.route('/timelines/new-entry/:timelineId')
                 content: req.body.content,
                 source: req.body.source
             }
+        Timeline.findOneAndUpdate( { "timelineId": req.params.timelineId }, 
+        { $push: { Entries: { $each: [newEntry], $sort: { dateObject: 1 } } }}, { new: true }, )
+        .then( 
+            updated => res.json( updated ) 
+        )
+/*        Timeline.findOne( {
+//            timelineId: req.params.timelineId
+        })
+        .then( timeline => {
+            const oldTimeline = timeline;
+
+                    
             console.log( '[ timelineRouter ] added entry ', newEntry ); 
             Timeline.findOneAndUpdate( {
                 timelineId: req.body.timelineId
@@ -49,10 +51,11 @@ router.route('/timelines/new-entry/:timelineId')
                 }
                 return res.json( returnValue ); 
             } )
-            .catch( err => res.status( 500 ).send( err, { status: "problem altering timeline object " } ) )
+            .catch( err => res.status( 500 ).json( { err, status: "problem altering timeline object " } ) )
         return res.json( timeline );
         } )
-        .catch( err => res.status( 500 ).send( err, { status: "problem adding entry " } ) ); 
+        .catch( err => res.status( 500 ).json( { err, status: "problem adding entry " } ) ); 
+        */
 });
 
 

@@ -13,9 +13,15 @@ const TimelineSchema = mongoose.Schema( {
         type: Array,
         required: true
     },
-    Entries:{
-        type: Array,
-    }
+    Entries: [{ 
+        date: String,
+        dateObject: Date,
+        source: String,
+        what: String,
+        where: String,
+        who: String,
+        content: String
+    }]
 } );
 
 const Timeline = mongoose.model( 'Timeline', TimelineSchema );
