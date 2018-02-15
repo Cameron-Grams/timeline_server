@@ -15,51 +15,58 @@ const timelines = require( '../data/older/timelines' );
 const timelineIndex = require( '../Helpers/timelineIndex' ); 
 
 router.route('/timelines/new-entry/:timelineId')
-    .post( ( req, res ) => {  
-        console.log( ' hit new entry ' ); 
-       const neededIndexParam = req.params; 
-       const neededNumber = neededIndexParam.timelineId;
-       const workingTimeline = timelineIndex[ neededNumber ]; 
-       const returnTimeline = order.orderEntryInput( workingTimeline, req.body ); 
-       return res.status( 200 ).json( returnTimeline );  
-});
+    .post( ( req, res ) => { 
+        Timeline.findOne( {
+            timelineId: req.params.timelineId
+        })
+        .then( timeline => {
+            const oldTimeline = timeline;
 
+            const dateArray = req.body.date.split( '/' );
+            const recordDate = new Date( dateArray[ 2 ], dateArray[ 0 ], dateArray[ 1 ] ); 
 
-router.route('/timelines/:timelineId/:entryId')
-    .patch( ( req, res ) => {  
-        const { timelineId, entryId } = req.params;
-        const neededNumber = neededIndexParam.timelineId;
-        const workingTimeline = timelineIndex[ neededNumber ]; 
-        const workingArray = workingTimeline.entries;
+            const numberEntries = Object.keys( timeline.Entries ).length; 
 
-        let targetIndex;
-        for ( let i = 0; i < workingArray.length; i++ ){
-            if ( workingArray[ i ].entryId === req.body.entryId ){
-                workingArray[ i ].title = req.body.title,
-                workingArray[ i ].what = req.body.what,
-                workingArray[ i ].date = req.body.date,
-                workingArray[ i ].dateObject = req.body.dateObject,
-                workingArray[ i ].who = req.body.who,
-                workingArray[ i ].where = req.body.where,
-                workingArray[ i ].content = req.body.content,
-                workingArray[ i ].source = req.body.source
+            const newEntry = {
+                entryId: numberEntries + 1,
+                what: req.body.what,
+                dateObject: recordDate,
+                date: req.body.date,
+                who: req.body.who,
+                where: req.body.where,
+                content: req.body.content,
+                source: req.body.source
             }
-        }
-
-        const returnTimeline = order.orderEntryInput( workingTimeline, req.body ); 
-        console.log( '[ timelineRouter ] updated TL: ', returnTimeline ); 
-        return res.status( 200 ).json( returnTimeline );  
+            console.log( '[ timelineRouter ] added entry ', newEntry ); 
+            Timeline.findOneAndUpdate( {
+                timelineId: req.body.timelineId
+            })
+            .then( changeTimeline => {
+                console.log( '[ timelineRouter ] second timeline ', changeTimeline.title ); 
+                const returnValue = {
+                    ...changeTimeline,
+                    Entries: [ ...Entries, newEntry ]
+                }
+                return res.json( returnValue ); 
+            } )
+            .catch( err => res.status( 500 ).send( err, { status: "problem altering timeline object " } ) )
+        return res.json( timeline );
+        } )
+        .catch( err => res.status( 500 ).send( err, { status: "problem adding entry " } ) ); 
 });
-
 
 
 router.route( `/timelines` )
     .post( ( req, res ) => {
-        const requestTimeline = timelineIndex[ req.body.index ]; 
-        const result = order.orderTimelines( requestTimeline ); 
-        return res.status( 200 ).json( result ); 
+        console.log( '[ timelineRouter ] received ', req.body );
+        Timeline.findOne( {
+            timelineId: req.body.timelineId
+        } )
+        .then( timeline => {
+            return res.json( timeline );
+        })
+        .catch( err => res.send( err, req.body ) ); 
     });
      
 module.exports = router;
-
 

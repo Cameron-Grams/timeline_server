@@ -28,11 +28,12 @@ router.route('/users/login')
 
 router.route( '/users/basicInfo' )
     .post( ( req, res ) => {
+
         User.findOne( {
             userId: req.body.userId
         } )
         .then( user => {
-            if ( req.token === "loggedIn" ){
+            if ( req.body.token ){
                 return res.json( { userId: user.userId, name: user.name, userTimelines: user.userTimelines } )
             } else {
                 return res.json( { status: "problem retrieving basic info, from usersRouter "} )
@@ -40,25 +41,38 @@ router.route( '/users/basicInfo' )
         } )
         .catch( err => res.send( err ) ); 
     })
-  
-router.route('/users/new-timeline' ) 
+ 
+
+// this will change with the bcrypt
+router.route( '/users/register' )
     .post( ( req, res ) => {  
-        const keys = Object.keys( timelinesIndex ); 
-        const newIndex = keys.length + 1;
-        const newTimeline = {
-            title: req.body.timelineTitle,
-            id: newIndex,
-            entries: []
-        };
-
-        const result = {
-            ...timelinesIndex,
-            };
-
-        result[ newIndex ] = newTimeline;
-
-        return res.status( 200 ).json( { title: req.body.timelineTitle, id: newIndex } );  
+        console.log( '[ userRouter ] registration with request ', req.body ); 
+        if( !req.body.userName || !req.body.userEmail || !req.body.userPassword ) {
+        return res.status(400).json( { success: false, message: 'Please complete the entire form.' } );
+        } else {
+        User.findOne( {
+            email: req.body.userEmail 
+        }).then( foundUser => { 
+            if ( foundUser ){
+                console.log( '[ userRouter ] found user ', foundUser ); 
+                return res.status(400).json({ success: false, message: 'That email address already exists.'});
+            } else {
+                User.create( {
+                    name: req.body.userName,   
+                    userId: 8, 
+                    email: req.body.userEmail,
+                    password: req.body.userPassword,
+                } ).then( ( createdUser ) => { 
+                        console.log( ' [ usersRouter ] created user ', createdUser );
+                        return res.json( createdUser );
+                    } )
+                    .catch( err => res.send( { message: "error creating user" } ) )
+                } 
+            })
+            .catch( err => res.send( { message: "error with found user" } ) )
+        }
 });
+
 
 
 
