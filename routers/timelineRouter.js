@@ -1,14 +1,15 @@
 const mongoose = require('mongoose');
 const express = require('express');
-// const bodyParser = require('body-parser');
+const bodyParser = require('body-parser');
 // var passport = require('passport');  
 //var jwt = require('jsonwebtoken'); 
-//const { SECRET, PORT, DATBASE_URL } = require( './config/mainConfig.js' );
+const { PORT, DATBASE_URL } = require( '../config' );
 
 const router = express.Router();
-// const jsonParser = bodyParser.json();
+const jsonParser = bodyParser.json();
 
 const { order } = require( '../Helpers/order' );
+const { Timeline } = require( '../models/timelineModel' ); 
  
 const timelines = require( '../data/older/timelines' );
 const timelineIndex = require( '../Helpers/timelineIndex' ); 

@@ -1,9 +1,8 @@
 const mongoose = require('mongoose');
 const express = require('express');
-// const bodyParser = require('body-parser');
+const bodyParser = require('body-parser');
 // var passport = require('passport');  
 //var jwt = require('jsonwebtoken'); 
-//const { SECRET, PORT, DATBASE_URL } = require( './config/mainConfig.js' );
 const { PORT, DATABASE_URL } = require( '../config' ); 
 
 const router = express.Router();
@@ -14,11 +13,12 @@ const { User } = require( '../models/userModel' );
 router.route('/users/login')
     .post( ( req, res ) => {  
         User.findOne( { 
-            email: req.body.email
+            email: req.body.userEmail
         } )
         .then( user => {
-            if ( user.password === req.body.password ){
-                return res.json( { ...user, token: "loggedIn" } ); 
+            if ( user.password === req.body.userPassword ){
+                user.token = "loggedIn"; 
+                return res.json( user ); 
             } else {
                 return res.status( 400 ).json( { status: "bad password" } ); 
             }
@@ -35,7 +35,7 @@ router.route( '/users/basicInfo' )
             if ( req.token === "loggedIn" ){
                 return res.json( { userId: user.userId, name: user.name, userTimelines: user.userTimelines } )
             } else {
-                return res.json( )
+                return res.json( { status: "problem retrieving basic info, from usersRouter "} )
             }
         } )
         .catch( err => res.send( err ) ); 
