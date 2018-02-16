@@ -20,7 +20,10 @@ const UserSchema = mongoose.Schema( {
         required: true
     },
     userTimelines:{
-        type: Array,
+        type: [ {
+            title: String,
+            timelineId: String
+        } ]
     } 
 } );
 

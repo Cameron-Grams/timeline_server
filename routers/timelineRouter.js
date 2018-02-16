@@ -10,7 +10,7 @@ const jsonParser = bodyParser.json();
 
 const { order } = require( '../Helpers/order' );
 const { Timeline } = require( '../models/timelineModel' ); 
- 
+const { User } = require( '../models/userModel' );
 
 router.route('/timelines/:timelineId')
     .post( ( req, res ) => { 
@@ -28,36 +28,11 @@ router.route('/timelines/:timelineId')
                 source: req.body.source
             }
         Timeline.findOneAndUpdate( { "timelineId": req.params.timelineId }, 
-        { $push: { Entries: { $each: [newEntry], $sort: { dateObject: 1 } } }}, { new: true }, )
+        { $push: { Entries: { $each: [newEntry], $sort: { dateObject: 1 } } }}, { new: true } )
         .then( 
             updated => res.json( updated ) 
         )
-/*        Timeline.findOne( {
-//            timelineId: req.params.timelineId
-        })
-        .then( timeline => {
-            const oldTimeline = timeline;
-
-                    
-            console.log( '[ timelineRouter ] added entry ', newEntry ); 
-            Timeline.findOneAndUpdate( {
-                timelineId: req.body.timelineId
-            })
-            .then( changeTimeline => {
-                console.log( '[ timelineRouter ] second timeline ', changeTimeline.title ); 
-                const returnValue = {
-                    ...changeTimeline,
-                    Entries: [ ...Entries, newEntry ]
-                }
-                return res.json( returnValue ); 
-            } )
-            .catch( err => res.status( 500 ).json( { err, status: "problem altering timeline object " } ) )
-        return res.json( timeline );
-        } )
-        .catch( err => res.status( 500 ).json( { err, status: "problem adding entry " } ) ); 
-        */
 });
-
 
 router.route( `/timelines` )
     .post( ( req, res ) => {
@@ -70,6 +45,34 @@ router.route( `/timelines` )
         })
         .catch( err => res.send( err, req.body ) ); 
     });
+
+router.route( '/timelines/new-timeline/:userId')
+    .post( ( req, res ) => {
+        Timeline.findOne( {
+            title: req.body.timelineTitle
+        })
+        .then( foundTimeline => {
+            if ( foundTimeline ){
+                return res.status(400).json({ success: false, message: 'That timeline already exists.'});
+            } else {
+                Timeline.create( {
+                    title: req.body.timelineTitle,
+                    timelineId: 8, 
+                    userId: req.params.userId,
+                    Entries: [ ]
+                })
+                .then( createdTimeline => { return res.json( createdTimeline ) } )
+                .catch( err => res.status( 400 ).send( err ) );
+                User.findOneAndUpdate( {
+                    userId: req.params.userId
+                })
+                .then(
+                    { $push: { timelines: { title: req.body.timelineTitle, timelineId: 8 } } }, { new: true } 
+                )
+            }
+        })
+        .catch( err => res.status( 400 ).send( err ) )
+    })
      
 module.exports = router;
 
