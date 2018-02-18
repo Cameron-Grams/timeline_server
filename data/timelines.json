@@ -1,7 +1,7 @@
 {
 "title": "timeline3",
 "timelineId": "3",
-"userId": [ "2" ],
+"userId":  "2",
 "Entries": [
 {  
 entryId: 2,
@@ -41,7 +41,7 @@ source: [ '' ]
 {
 "title": "History of US Finance",
 "timelineId": "2",
-"userId": [ "1" ],
+"userId":  "1",
 "Entries": 
 [   
 {  
@@ -170,7 +170,7 @@ source: [ 'https://www.reuters.com/article/us-usa-cftc-digitalcurrency/ledgerx-g
 {
 "title": "History of Judo",
 "timelineId": "1",
-"userId": [ "1", "2" ], 
+"userId":  [ "1", "2" ],  
 "Entries": 
 [   
 {  

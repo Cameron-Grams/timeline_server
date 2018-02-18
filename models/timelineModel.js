@@ -10,7 +10,7 @@ const TimelineSchema = mongoose.Schema( {
         required: true
     },
     userId:{
-        type: Array,
+        type: String,
         required: true
     },
     Entries: [{ 
