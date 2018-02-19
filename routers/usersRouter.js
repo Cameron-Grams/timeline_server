@@ -17,7 +17,6 @@ router.route('/users/login')
         } )
         .then( user => {
             if ( user.password === req.body.userPassword ){
-                user.token = "loggedIn"; 
                 return res.json( user ); 
             } else {
                 return res.status( 400 ).json( { status: "bad password" } ); 

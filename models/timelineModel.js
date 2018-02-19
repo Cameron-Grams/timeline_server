@@ -9,10 +9,7 @@ const TimelineSchema = mongoose.Schema( {
         type: String,
         required: true
     },
-    userId:{
-        type: String,
-        required: true
-    },
+    userId:{ type: mongoose.Schema.Types.ObjectId, ref: 'Entries' },
     Entries: [{ 
         type: mongoose.Schema.Types.ObjectId, ref: 'Entries' 
     }]

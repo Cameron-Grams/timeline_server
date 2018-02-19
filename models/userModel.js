@@ -19,12 +19,9 @@ const UserSchema = mongoose.Schema( {
         type: String,
         required: true
     },
-    userTimelines:{
-        type: [ {
-            title: String,
-            timelineId: String
-        } ]
-    } 
+    userTimelines: [{ 
+        type: mongoose.Schema.Types.ObjectId, ref: 'Timeline' 
+    }]
 } );
 
 const User = mongoose.model( 'User', UserSchema );
