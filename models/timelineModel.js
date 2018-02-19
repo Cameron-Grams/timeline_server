@@ -14,15 +14,7 @@ const TimelineSchema = mongoose.Schema( {
         required: true
     },
     Entries: [{ 
-        entryId: String,
-        title: String,
-        date: String,
-        dateObject: Date,
-        source: String,
-        what: String,
-        where: String,
-        who: String,
-        content: String
+        type: mongoose.Schema.Types.ObjectId, ref: 'Entries' 
     }]
 } );
 
