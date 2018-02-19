@@ -1,0 +1,33 @@
+{  
+entryId: 1,
+title: 'Judo Developed by Jigoro Kano',
+what: 'Dr. Jigoro Kano develops the martial art of Judo',
+date: '1/1/1882',
+dateObject: ISODate( "1882-02-01T05:00:00.000Z" ),
+who: 'unknown',
+where: 'Tokyo, Japan',
+content: 'Dr. Kano adopts the techniques from Ju Jitsu into a martial art aimed at spiritual development.',
+source: [ '' ]
+}
+{  
+entryId: 2,
+title: 'Judo comes to the USA',
+what: 'Judo adopted in practice.....',
+date: '3/13/1951',
+dateObject: ISODate( "1951-03-04T05:00:00.000Z" ), 
+who: 'unknown',
+where: 'Chicago',
+content: 'World War II brings US military personnel in contact with Asian martial arts',
+source: [ '' ]
+}
+{  
+entryId: 3,
+title: 'Judo comes to Europe',
+what: 'Judo competitions held in Europe',
+date: '1/1/1960',
+dateObject: ISODate( "1960-02-01T05:00:00.000Z" ), 
+who: 'many',
+where: 'Berlin, Germany',
+content: 'Practice and competition in Judo spreads',
+source: [ '' ]
+}
