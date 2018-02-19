@@ -23,6 +23,7 @@ router.route('/timelines/:timelineId')
 
         const newEntry = {
                 entryId: uuidv4(), 
+                title: req.body.title,
                 what: req.body.what,
                 dateObject: recordDate,
                 date: req.body.date,
@@ -36,18 +37,27 @@ router.route('/timelines/:timelineId')
         .then( 
             updated => res.json( updated ) 
         )
-});
-
-// updates an entry on the timeline from params and data in the request
-router.route( '/timelines/update-entry/:timelineId' )
-    .post( ( req, res ) => {
+    })
+    .put( ( req, res ) => {
+        console.log( '[ timelineRouter ] updating entry, received: ', req.body ); 
         Timeline.updateOne(
-            { _id: req.params.timelineId,
+            { timelineId: req.params.timelineId,
             "Entries": { $elemMatch: { "entryId": { $eq: req.body.entryId } } } },
-            { $set: { "Entries.$": { ...req.body } } }
+            { $set: { "Entries.$": { 
+                title: req.body.title,
+                what: req.body.what,
+                dateObject: req.body.dateObject,
+                date: req.body.date,
+                who: req.body.who,
+                where: req.body.where,
+                content: req.body.content,
+                source: req.body.source
+             } } }
         )
         .then( timeline => res.json( timeline ) )
-    } )
+    } );
+        
+    
 
 
 

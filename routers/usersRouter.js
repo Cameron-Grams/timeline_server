@@ -4,7 +4,7 @@ const bodyParser = require('body-parser');
 // var passport = require('passport');  
 //var jwt = require('jsonwebtoken'); 
 const { PORT, DATABASE_URL } = require( '../config' ); 
-
+const uuidv4 = require( 'uuid/v4' ); 
 const router = express.Router();
 const jsonParser = bodyParser.json();
 const { User } = require( '../models/userModel' );
@@ -59,7 +59,7 @@ router.route( '/users/register' )
             } else {
                 User.create( {
                     name: req.body.userName,   
-                    userId: 8, 
+                    userId: uuidv4(), 
                     email: req.body.userEmail,
                     password: req.body.userPassword,
                 } ).then( ( createdUser ) => { 
