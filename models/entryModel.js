@@ -15,7 +15,8 @@ const EntrySchema = new mongoose.Schema( {
     },
     date: {
         type: String,
-        required: true,
+        required: true
+    },
     who: {
         type: String,
         required: true
@@ -32,9 +33,8 @@ const EntrySchema = new mongoose.Schema( {
         type: String,
         required: true
     }
-}, {
-    timestamps: true
 } );
 
+const Entry = mongoose.model( "Entry", EntrySchema );
 
-module.exports = mongoose.model( "Entries", EntrySchema );
+module.exports = { Entry }; 

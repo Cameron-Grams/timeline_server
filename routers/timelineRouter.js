@@ -5,24 +5,21 @@ const bodyParser = require('body-parser');
 //var jwt = require('jsonwebtoken'); 
 const { PORT, DATBASE_URL } = require( '../config' );
 
-const uuidv4 = require( 'uuid/v4' ); 
-
 const router = express.Router();
 const jsonParser = bodyParser.json();
 
 const { order } = require( '../Helpers/order' );
 const { Timeline } = require( '../models/timelineModel' ); 
 const { User } = require( '../models/userModel' );
+const { Entry } = require( '../models/entryModel' );
 
 // adds an entry to the timeline specified in params
 router.route('/timelines/:timelineId')
     .post( ( req, res ) => { 
-
         const dateArray = req.body.date.split( '/' );
         const recordDate = new Date( dateArray[ 2 ], dateArray[ 0 ], dateArray[ 1 ] ); 
 
-        const newEntry = {
-                entryId: uuidv4(), 
+        Entry.create( {
                 title: req.body.title,
                 what: req.body.what,
                 dateObject: recordDate,
@@ -31,17 +28,21 @@ router.route('/timelines/:timelineId')
                 where: req.body.where,
                 content: req.body.content,
                 source: req.body.source
-            }
-        Timeline.findOneAndUpdate( { "timelineId": req.params.timelineId }, 
-        { $push: { Entries: { $each: [newEntry], $sort: { dateObject: 1 } } }}, { new: true } )
-        .then( 
-            updated => res.json( updated ) 
-        )
+        } )
+        .then( entry => {
+            Timeline.findOneAndUpdate( { "_id": req.params.timelineId }, 
+                { $push: { Entries: { $each: [ entry ], $sort: { dateObject: 1 } } }}, { new: true } )
+            .then( 
+                updated => { return res.json( updated ) }
+            )
+            .catch( err => { return res.json( err ) } ); 
+        } )
+        .catch( err => res.json( err ) ); 
     })
     .put( ( req, res ) => {
         console.log( '[ timelineRouter ] updating entry, received: ', req.body ); 
         Timeline.updateOne(
-            { timelineId: req.params.timelineId,
+            { _id: req.params.timelineId,
             "Entries": { $elemMatch: { "entryId": { $eq: req.body.entryId } } } },
             { $set: { "Entries.$": { 
                 title: req.body.title,
@@ -66,19 +67,17 @@ router.route('/timelines/:timelineId')
 router.route( `/timelines` )
     .post( ( req, res ) => {
         Timeline.findOne( {
-            timelineId: req.body.timelineId
+            _id: req.body.timelineId
         } )
         .then( timeline => {
-            return res.json( timeline );
-        })
-        .catch( err => res.send( err, req.body ) ); 
+            return res.json( timeline )            
+        } )
+        .catch( err => res.send( err ) ); 
     });
 
 //creates a new id with the userId associated
 router.route( '/timelines/new-timeline/:userId')
     .post( ( req, res ) => {
-
-        let transportTimelineId; 
 
         Timeline.findOne( {
             title: req.body.timelineTitle
@@ -89,21 +88,17 @@ router.route( '/timelines/new-timeline/:userId')
             } else {
                 Timeline.create( {
                     title: req.body.timelineTitle,
-                    timelineId: uuidv4(),
                     userId: req.params.userId,
                     Entries: [ ]
                 })
                 .then( createdTimeline => { 
-                    console.log( '[ timelineRouter ] new timeline created ', createdTimeline ); 
-                    transportTimelineId = createdTimeline.timelineId;
-                    return res.json( createdTimeline ) } )
-                .catch( err => res.status( 400 ).send( err ) );
-                User.findOneAndUpdate( {
-                    userId: req.params.userId
-                })
-                .then(
-                    { $push: { userTimelines: { title: req.body.timelineTitle, timelineId: transportTimelineId } } }, { new: true } 
-                )
+                    console.log( '[ timelineRouter ] attempting to add TL to user ', createdTimeline ); 
+
+                    User.findOneAndUpdate( { "_id": req.params.userId }, 
+                        { $push: { userTimelines: { $each: [ createdTimeline ], $sort: { dateObject: 1 } } }}, { new: true } )
+                        return res.json( createdTimeline );
+                } )
+               .catch( err => res.status( 400 ).send( err ) );
             }
         })
         .catch( err => res.status( 400 ).send( err ) )

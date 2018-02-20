@@ -7,6 +7,7 @@ mongoose.Promise = global.Promise;
 const {PORT, DATABASE_URL } = require('./config');
 const timelineRouter = require( './routers/timelineRouter' );
 const usersRouter = require( './routers/usersRouter' ); 
+const entryRouter = require( './routers/entryRouter' ); 
 const app = express();
 
 app.use(bodyParser.json());
@@ -20,6 +21,7 @@ app.use(function (req, res, next) {
 
 app.use( '/api', usersRouter );
 app.use( '/api', timelineRouter );
+app.use( '/api', entryRouter ); 
 
 let server;
 

@@ -4,7 +4,6 @@ const bodyParser = require('body-parser');
 // var passport = require('passport');  
 //var jwt = require('jsonwebtoken'); 
 const { PORT, DATABASE_URL } = require( '../config' ); 
-const uuidv4 = require( 'uuid/v4' ); 
 const router = express.Router();
 const jsonParser = bodyParser.json();
 const { User } = require( '../models/userModel' );
@@ -33,7 +32,7 @@ router.route( '/users/basicInfo' )
         } )
         .then( user => {
             if ( req.body.token ){
-                return res.json( { userId: user.userId, name: user.name, userTimelines: user.userTimelines } )
+                return res.json( { userId: user._id, name: user.name, userTimelines: user.userTimelines } )
             } else {
                 return res.json( { status: "problem retrieving basic info, from usersRouter "} )
             }
@@ -58,7 +57,6 @@ router.route( '/users/register' )
             } else {
                 User.create( {
                     name: req.body.userName,   
-                    userId: uuidv4(), 
                     email: req.body.userEmail,
                     password: req.body.userPassword,
                 } ).then( ( createdUser ) => { 
