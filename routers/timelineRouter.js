@@ -95,8 +95,9 @@ router.route( '/timelines/new-timeline/:userId')
                     console.log( '[ timelineRouter ] attempting to add TL to user ', createdTimeline ); 
 
                     User.findOneAndUpdate( { "_id": req.params.userId }, 
-                        { $push: { userTimelines: { $each: [ createdTimeline ], $sort: { dateObject: 1 } } }}, { new: true } )
-                        return res.json( createdTimeline );
+                        { $push: { userTimelines: { $each: [ createdTimeline ], $sort: { dateObject: 1 } } }}, { new: true } );
+                    
+                    return res.json( createdTimeline );
                 } )
                .catch( err => res.status( 400 ).send( err ) );
             }
