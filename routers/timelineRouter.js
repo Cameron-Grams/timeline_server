@@ -1,9 +1,7 @@
 const mongoose = require('mongoose');
 const express = require('express');
 const bodyParser = require('body-parser');
-// var passport = require('passport');  
-//var jwt = require('jsonwebtoken'); 
-const { PORT, DATBASE_URL } = require( '../config' );
+const { PORT, DATBASE_URL } = require( '../Config/config' );
 
 const router = express.Router();
 const jsonParser = bodyParser.json();
@@ -12,6 +10,8 @@ const { timeline } = require( '../models/timelineModel' );
 const { user } = require( '../models/userModel' );
 const { entry } = require( '../models/entryModel' );
 
+var passport = require('passport');  
+var jwt = require('jsonwebtoken');
 // adds an entry to the timeline specified in params
 router.route('/timelines/:timelineId')
     .post( ( req, res ) => { 

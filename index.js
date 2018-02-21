@@ -4,14 +4,21 @@ const express = require('express');
 
 mongoose.Promise = global.Promise;
 
-const {PORT, DATABASE_URL } = require('./config');
+const {PORT, DATABASE_URL } = require('./Config/config');
 const timelineRouter = require( './routers/timelineRouter' );
 const usersRouter = require( './routers/usersRouter' ); 
 const entryRouter = require( './routers/entryRouter' ); 
 const app = express();
 
 app.use(bodyParser.json());
-  
+
+var passport = require('passport');  
+var jwt = require('jsonwebtoken');  
+
+app.use( passport.initialize() );
+const { basicStrategy: Strategy } = require( './Config/passportStrategy' );
+Strategy( passport );
+
 app.use(function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,PATCH,DELETE,OPTIONS');

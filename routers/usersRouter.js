@@ -1,12 +1,14 @@
 const mongoose = require('mongoose');
 const express = require('express');
 const bodyParser = require('body-parser');
-// var passport = require('passport');  
-//var jwt = require('jsonwebtoken'); 
-const { PORT, DATABASE_URL } = require( '../config' ); 
+
+const { PORT, DATABASE_URL, SECRET } = require( '../Config/config' ); 
 const router = express.Router();
 const jsonParser = bodyParser.json();
 const { user } = require( '../models/userModel' );
+
+var passport = require('passport');  
+var jwt = require('jsonwebtoken'); 
 
 router.route('/users/login')
     .post( ( req, res ) => {  
@@ -14,18 +16,30 @@ router.route('/users/login')
             email: req.body.userEmail
         } )
         .populate( "userTimelines" )
-        .then( user => {
-            if ( user.password === req.body.userPassword ){
-                return res.json( user ); 
+        .then( 
+         user => {
+            if ( !user ){
+                res.status( 400 ).send( { success: false, message: 'Authentication failed. User not found.' } );
             } else {
-                return res.status( 400 ).json( { status: "bad password" } ); 
+                user.comparePassword( req.body.password, ( err, isMatch ) => {
+                    if ( isMatch && !err ){
+                        var token = jwt.sign( 
+                            { id: user._id, userName: user.name }, 
+                            SECRET, {
+                            expiresIn: 600000000
+                        } );
+                        res.json( { success: true, token: 'Bearer ' + token, _id: user._id } );
+                    } else {
+                        res.status( 400 ).send( { success: false, message: 'Authentication failed. User not found.' } );
+                    }
+                })
             }
-        } )
-        .catch( err => res.send( err ) );  
+        } ).catch( err => res.send( err ) );
+  
     });
 
 router.route( '/users/basicInfo' )
-    .post( ( req, res ) => {
+    .post( passport.authenticate('jwt', { session: false }), (req, res) => { 
         user.findOne( {
             userId: req.body.userId
         } )
@@ -40,7 +54,6 @@ router.route( '/users/basicInfo' )
     })
  
 
-// this will change with the bcrypt
 router.route( '/users/register' )
     .post( ( req, res ) => {  
         console.log( '[ userRouter ] registration with request ', req.body ); 
