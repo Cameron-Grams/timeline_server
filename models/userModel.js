@@ -16,7 +16,7 @@ const userSchema = mongoose.Schema( {
         required: true
     },
     userTimelines: [{ 
-        type: mongoose.Schema.Types.ObjectId, ref: 'Timeline' 
+        type: mongoose.Schema.Types.ObjectId, ref: 'timeline' 
     }]
 } );
 

@@ -31,10 +31,10 @@ router.route('/timelines/:timelineId')
         .then( entry => {
             timeline.findOneAndUpdate( { "_id": req.params.timelineId }, 
                 { $push: { entries: { $each: [ entry ], $sort: { dateObject: 1 } } }}, { new: true } )
-            .then( 
-                updated => { return res.json( updated ) }
-            )
-            .catch( err => { return res.json( err ) } ); 
+                   
+           .then( ( updated ) => {  return res.json( updated ) } )
+              
+           .catch( err => { return res.json( err ) } ); 
         } )
         .catch( err => res.json( err ) ); 
     })
@@ -45,6 +45,7 @@ router.route( `/timelines` )
         timeline.findOne( {
             _id: req.body.timelineId
         } )
+        .populate( "entries" )
         .then( timeline => {
             return res.json( timeline )            
         } )
@@ -58,7 +59,6 @@ router.route( '/timelines/new-timeline/:userId')
         timeline.findOne( {
             title: req.body.timelineTitle
         })
-        .populate( "entries" )
         .then( foundTimeline => {
             if ( foundTimeline ){
                 return res.status(400).json({ success: false, message: 'That timeline already exists.'});
@@ -69,8 +69,6 @@ router.route( '/timelines/new-timeline/:userId')
                     Entries: [ ]
                 })
                 .then( createdTimeline => { 
-                    console.log( '[ timelineRouter ] attempting to add TL to user ', createdTimeline ); 
-
                     user.findOneAndUpdate( { "_id": req.params.userId }, 
                         { $push: { userTimelines: { $each: [ createdTimeline._id ] } }}, { new: true } )
                         .then( () => res.json( createdTimeline ) ) 

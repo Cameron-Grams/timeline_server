@@ -6,14 +6,14 @@ const bodyParser = require('body-parser');
 const { PORT, DATABASE_URL } = require( '../config' ); 
 const router = express.Router();
 const jsonParser = bodyParser.json();
-const { Entry } = require( '../models/entryModel' );
+const { entry } = require( '../models/entryModel' );
 
 
 router.route('/entries')
 
     .put( ( req, res ) => {
-        console.log( '[ timelineRouter ] updating entry, received: ', req.body ); 
-        Entry.updateOne(
+        console.log( '[ entryRouter ] updating entry, received: ', req.body ); 
+        entry.updateOne(
             { _id: req.params.timelineId,
             "Entries": { $elemMatch: { "entryId": { $eq: req.body.entryId } } } },
             { $set: { "Entries.$": { 
@@ -27,7 +27,7 @@ router.route('/entries')
                 source: req.body.source
              } } }
         )
-        .then( timeline => res.json( timeline ) )
+        .then( entry => res.json( entry ) )
     } );
 
 
