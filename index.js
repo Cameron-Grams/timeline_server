@@ -11,6 +11,12 @@ const entryRouter = require( './routers/entryRouter' );
 const app = express();
 
 app.use(bodyParser.json());
+app.use(function (req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,PATCH,DELETE,OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type');
+    next();
+});
 
 var passport = require('passport');  
 var jwt = require('jsonwebtoken');  
@@ -18,13 +24,6 @@ var jwt = require('jsonwebtoken');
 app.use( passport.initialize() );
 const { basicStrategy: Strategy } = require( './Config/passportStrategy' );
 Strategy( passport );
-
-app.use(function (req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,PATCH,DELETE,OPTIONS');
-    res.header('Access-Control-Allow-Headers', 'Content-Type');
-    next();
-});
 
 app.use( '/api', usersRouter );
 app.use( '/api', timelineRouter );

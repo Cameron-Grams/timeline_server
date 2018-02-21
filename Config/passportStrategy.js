@@ -1,11 +1,8 @@
 var JwtStrategy = require( 'passport-jwt' ).Strategy;  
 var ExtractJwt = require( 'passport-jwt' ).ExtractJwt;  
-var { User } = require('../models/usersModel');  
+var { User } = require('../models/userModel');  
 var config = require('./config');
 
-// Setup work and export for the JWT passport strategy
-//basic strategy finds a user by the user id in the mongo db by reading the user id from the token 
-//that token is built in the user athentication of the userRouter
 const basicStrategy = function(passport) {  
   var opts = {};
   opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();

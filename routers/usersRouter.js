@@ -12,14 +12,17 @@ var jwt = require('jsonwebtoken');
 
 router.route('/users/login')
     .post( ( req, res ) => {  
+        console.log( '[ userRouter ] sent request ', req.body );
+
         user.findOne( { 
             email: req.body.userEmail
         } )
         .populate( "userTimelines" )
         .then( 
          user => {
+            console.log( '[ userRouter ] found user: ', user ) 
             if ( !user ){
-                res.status( 400 ).send( { success: false, message: 'Authentication failed. User not found.' } );
+                res.status( 400 ).send( { success: false, message: 'Authentication failed. User not found, ERROR 1.' } );
             } else {
                 user.comparePassword( req.body.password, ( err, isMatch ) => {
                     if ( isMatch && !err ){
@@ -44,7 +47,7 @@ router.route( '/users/basicInfo' )
             userId: req.body.userId
         } )
         .then( user => {
-            if ( req.body.token ){
+            if ( user ){
                 return res.json( { userId: user._id, name: user.name, userTimelines: user.userTimelines } )
             } else {
                 return res.json( { status: "problem retrieving basic info, from usersRouter "} )

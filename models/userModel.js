@@ -40,17 +40,25 @@ userSchema.pre( 'save', function ( next ) {
       return next();
     }
   });
-   
+   /*
+  // From curricculum: 
   // Create method to compare password input to password saved in database
   userSchema.methods.comparePassword = function( pw, cb ) {  
+    console.log( '[ userModel ] in user model, comparing pw' ); 
     bcrypt.compare(pw, this.password, ( err, isMatch ) => {
+      console.log( '[ userModel ] with pw ', pw, ' and internal pw ', this.password );
+
       if ( err ) {
         return cb( err );
       }
       cb( null, isMatch );
     });
   };
-  
+  */
+ userSchema.methods.comparePassword = function userComparePassword( password ){
+   console.log( ' [ userModel ] in compare ' );
+   return bcrypt.compare( password, this.password ); 
+ }
 
 
 const user = mongoose.model( 'user', userSchema );
