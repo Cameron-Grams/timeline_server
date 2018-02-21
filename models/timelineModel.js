@@ -1,17 +1,18 @@
 const mongoose = require( 'mongoose' );
 
-const TimelineSchema = mongoose.Schema( {
+const timelineSchema = mongoose.Schema( {
     title:{
         type: String,
-        required: true
+        required: true,
+        unique: true
     },
     userId:{ type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-    Entries: [{ 
-        type: mongoose.Schema.Types.ObjectId, ref: 'Entries' 
+    entries: [{ 
+        type: mongoose.Schema.Types.ObjectId, ref: 'entries' 
     }]
 } );
 
-const Timeline = mongoose.model( 'Timeline', TimelineSchema );
+const timeline = mongoose.model( 'timeline', timelineSchema );
 
-module.exports = { Timeline }; 
+module.exports = { timeline }; 
 

@@ -6,14 +6,14 @@ const bodyParser = require('body-parser');
 const { PORT, DATABASE_URL } = require( '../config' ); 
 const router = express.Router();
 const jsonParser = bodyParser.json();
-const { User } = require( '../models/userModel' );
-
+const { user } = require( '../models/userModel' );
 
 router.route('/users/login')
     .post( ( req, res ) => {  
-        User.findOne( { 
+        user.findOne( { 
             email: req.body.userEmail
         } )
+        .populate( "userTimelines" )
         .then( user => {
             if ( user.password === req.body.userPassword ){
                 return res.json( user ); 
@@ -26,8 +26,7 @@ router.route('/users/login')
 
 router.route( '/users/basicInfo' )
     .post( ( req, res ) => {
-
-        User.findOne( {
+        user.findOne( {
             userId: req.body.userId
         } )
         .then( user => {
@@ -48,14 +47,14 @@ router.route( '/users/register' )
         if( !req.body.userName || !req.body.userEmail || !req.body.userPassword ) {
         return res.status(400).json( { success: false, message: 'Please complete the entire form.' } );
         } else {
-        User.findOne( {
+        user.findOne( {
             email: req.body.userEmail 
         }).then( foundUser => { 
             if ( foundUser ){
                 console.log( '[ userRouter ] found user ', foundUser ); 
                 return res.status(400).json({ success: false, message: 'That email address already exists.'});
             } else {
-                User.create( {
+                user.create( {
                     name: req.body.userName,   
                     email: req.body.userEmail,
                     password: req.body.userPassword,
