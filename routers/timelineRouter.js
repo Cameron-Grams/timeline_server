@@ -1,65 +1,83 @@
-
-// const mongoose = require('mongoose');
+const mongoose = require('mongoose');
 const express = require('express');
-// const bodyParser = require('body-parser');
-// var passport = require('passport');  
-//var jwt = require('jsonwebtoken'); 
-//const { SECRET, PORT, DATBASE_URL } = require( './config/mainConfig.js' );
+const bodyParser = require('body-parser');
+const { PORT, DATBASE_URL } = require( '../Config/config' );
 
 const router = express.Router();
-// const jsonParser = bodyParser.json();
+const jsonParser = bodyParser.json();
 
-const { order } = require( '../Helpers/order' );
- 
-const timelines = require( '../data/older/timelines' );
-const timelineIndex = require( '../Helpers/timelineIndex' ); 
+const { timeline } = require( '../models/timelineModel' ); 
+const { user } = require( '../models/userModel' );
+const { entry } = require( '../models/entryModel' );
 
-router.route('/timelines/new-entry/:timelineId')
-    .post( ( req, res ) => {  
-        console.log( ' hit new entry ' ); 
-       const neededIndexParam = req.params; 
-       const neededNumber = neededIndexParam.timelineId;
-       const workingTimeline = timelineIndex[ neededNumber ]; 
-       const returnTimeline = order.orderEntryInput( workingTimeline, req.body ); 
-       return res.status( 200 ).json( returnTimeline );  
-});
+var passport = require('passport');  
+var jwt = require('jsonwebtoken');
+// adds an entry to the timeline specified in params
+router.route('/timelines/:timelineId')
+    .post( ( req, res ) => { 
+        const dateArray = req.body.date.split( '/' );
+        const recordDate = new Date( dateArray[ 2 ], dateArray[ 0 ], dateArray[ 1 ] ); 
 
+        entry.create( {
+                title: req.body.title,
+                what: req.body.what,
+                dateObject: recordDate,
+                date: req.body.date,
+                who: req.body.who,
+                where: req.body.where,
+                content: req.body.content,
+                source: req.body.source
+        } )
+        .then( entry => {
+            timeline.findOneAndUpdate( { "_id": req.params.timelineId }, 
+                { $push: { entries: { $each: [ entry ], $sort: { dateObject: 1 } } }}, { new: true } )
+                   
+           .then( ( updated ) => {  return res.json( updated ) } )
+              
+           .catch( err => { return res.json( err ) } ); 
+        } )
+        .catch( err => res.json( err ) ); 
+    })
 
-router.route('/timelines/:timelineId/:entryId')
-    .patch( ( req, res ) => {  
-        const { timelineId, entryId } = req.params;
-        const neededNumber = neededIndexParam.timelineId;
-        const workingTimeline = timelineIndex[ neededNumber ]; 
-        const workingArray = workingTimeline.entries;
-
-        let targetIndex;
-        for ( let i = 0; i < workingArray.length; i++ ){
-            if ( workingArray[ i ].entryId === req.body.entryId ){
-                workingArray[ i ].title = req.body.title,
-                workingArray[ i ].what = req.body.what,
-                workingArray[ i ].date = req.body.date,
-                workingArray[ i ].dateObject = req.body.dateObject,
-                workingArray[ i ].who = req.body.who,
-                workingArray[ i ].where = req.body.where,
-                workingArray[ i ].content = req.body.content,
-                workingArray[ i ].source = req.body.source
-            }
-        }
-
-        const returnTimeline = order.orderEntryInput( workingTimeline, req.body ); 
-        console.log( '[ timelineRouter ] updated TL: ', returnTimeline ); 
-        return res.status( 200 ).json( returnTimeline );  
-});
-
-
-
+// finds the requested timeline by id number    
 router.route( `/timelines` )
     .post( ( req, res ) => {
-        const requestTimeline = timelineIndex[ req.body.index ]; 
-        const result = order.orderTimelines( requestTimeline ); 
-        return res.status( 200 ).json( result ); 
+        timeline.findOne( {
+            _id: req.body.timelineId
+        } )
+        .populate( "entries" )
+        .then( timeline => {
+            return res.json( timeline )            
+        } )
+        .catch( err => res.send( err ) ); 
     });
+
+//creates a new id with the userId associated
+router.route( '/timelines/new-timeline/:userId')
+    .post( ( req, res ) => {
+
+        timeline.findOne( {
+            title: req.body.timelineTitle
+        })
+        .then( foundTimeline => {
+            if ( foundTimeline ){
+                return res.status(400).json({ success: false, message: 'That timeline already exists.'});
+            } else {
+                timeline.create( {
+                    title: req.body.timelineTitle,
+                    userId: req.params.userId,
+                    Entries: [ ]
+                })
+                .then( createdTimeline => { 
+                    user.findOneAndUpdate( { "_id": req.params.userId }, 
+                        { $push: { userTimelines: { $each: [ createdTimeline._id ] } }}, { new: true } )
+                        .then( () => res.json( createdTimeline ) ) 
+                } )
+               .catch( err => res.status( 400 ).send( err ) );
+            }
+        })
+        .catch( err => res.status( 400 ).send( err ) )
+    })
      
 module.exports = router;
-
 

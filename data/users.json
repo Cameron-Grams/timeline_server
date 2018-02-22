@@ -1,0 +1,14 @@
+ { token: "somestring",  
+      name: 'DEMO',
+      email: 'demo@here.com',
+      password: 'demo',
+      userTimelines: [] 
+     
+}
+{ 
+    token: "someOtherString", 
+    name: 'DEMO-2',
+    email: 'demo2@here.com',
+    password: 'demo2',
+    userTimelines:[] 
+}

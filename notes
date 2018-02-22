@@ -1,0 +1,21 @@
+
+/users/:timelineId/:entryId
+
+
+// ----- import to MongoDB
+mongoimport --db <database name> --collection <collection name> --drop --file ~/<path-to-unzipped-data-file>
+
+
+mongoimport --db timelinesDb --collection timelines --drop --file ./timelines.json
+
+mongoimport --db timelinesDb --collection users --drop --file ./users.json
+
+
+
+Remaining:
+JWT
+
+Styling
+
+
+

@@ -1,101 +1,97 @@
-
-// const mongoose = require('mongoose');
+const mongoose = require('mongoose');
 const express = require('express');
-// const bodyParser = require('body-parser');
-// var passport = require('passport');  
-//var jwt = require('jsonwebtoken'); 
-//const { SECRET, PORT, DATBASE_URL } = require( './config/mainConfig.js' );
+const bodyParser = require('body-parser');
 
+const { PORT, DATABASE_URL, SECRET, EXPIRATION } = require( '../Config/config' ); 
 const router = express.Router();
-// const jsonParser = bodyParser.json();
- 
-const timelinesIndex = require( '../Helpers/timelineIndex' ); 
-const user1 = require( '../data/user1' ); 
-const user2 = require( '../data/user2' ); 
-//two data models exported models folder
-// const { User } = require( './models/user' );
+const jsonParser = bodyParser.json();
+const { user } = require( '../models/userModel' );
 
-//
-//route to register a user and create the initial user db entry; from register-logic.js
-router.route('/users/register')
-    .post( ( req, res ) => {  
-        console.log( '[ userRoter, register, 20 ] on register ', req.body ); 
-        return res.status(200).json( req.body ); 
-});
-
-const auth1 = ( userReqBody ) => {
-    if ( userReqBody.userPassword === user1.password && userReqBody.userEmail === user1.email ){
-        return user1;
-    }
-    return false; 
-}
-
-const auth2 = ( userReqBody ) => {
-    if ( userReqBody.userPassword === user2.password && userReqBody.userEmail === user2.email ){
-        return user2;
-    }
-    return false; 
-}
+var passport = require('passport');  
+var jwt = require('jsonwebtoken'); 
 
 router.route('/users/login')
     .post( ( req, res ) => {  
-        if ( auth1( req.body ) ){
-           return res.json( {
-                ...user1
-            } ); 
-        }; 
-        if ( auth2( req.body ) ){
-            return res.json( user2 ); 
-        }; 
-        return false; 
-    });
 
+        user.findOne( { 
+            email: req.body.userEmail
+        } )
+        .populate( "userTimelines" )
+        .then( ( foundUser ) => {
+            const isAuthorized = foundUser.comparePassword( req.body.userPassword ); 
 
-const auth3 = ( userReqBody ) => {
-    if ( userReqBody.token === user1.token ){
-        return user1;
-    }
-    return false; 
-}
-
-const auth4 = ( userReqBody ) => {
-    if ( userReqBody.token === user2.token ){
-        return user2;
-    }
-    return false; 
-}
-router.route( '/users/basicInfo' )
-    .post( ( req, res ) => {
-        if ( auth3( req.body ) ){
-           return res.json( {
-                ...user1
-            } ); 
-        }; 
-        if ( auth4( req.body ) ){
-            return res.json( user2 ); 
-        }; 
-        return false; 
-
-    })
-  
-router.route('/users/new-timeline' ) 
-    .post( ( req, res ) => {  
-        const keys = Object.keys( timelinesIndex ); 
-        const newIndex = keys.length + 1;
-        const newTimeline = {
-            title: req.body.timelineTitle,
-            id: newIndex,
-            entries: []
-        };
-
-        const result = {
-            ...timelinesIndex,
+            if (!isAuthorized) {
+                return res.status(400).json({
+                    generalMessage: 'Email or password is incorrect',
+                });
+            }
+            const tokenPayload = {
+                _id: foundUser._id,
+                email: foundUser.email,
+                userName: foundUser.name,
+                userTimelines: foundUser.userTimelines,
             };
 
-        result[ newIndex ] = newTimeline;
+            const token = jwt.sign( tokenPayload, SECRET, {
+                expiresIn: EXPIRATION,
+            });
 
-        return res.status( 200 ).json( { title: req.body.timelineTitle, id: newIndex } );  
+            return res.json( { 
+                token: `Bearer ${token}`,
+                _id: foundUser._id,
+                name: foundUser.name,
+                timelines: foundUser.userTimelines
+            });
+        })
+        .catch( err => res.status(400).json( err ) );
+    });
+
+router.route( '/users/basicInfo' )
+    .post( passport.authenticate('jwt', { session: false }), (req, res) => { 
+        console.log( '[ usersRouter ] current req body ', req.body ); 
+
+        user.findOne( {
+            userId: req.body.userId
+        } )
+        .then( user => {
+            if ( user ){
+                return res.json( { userId: user._id, name: user.name, userTimelines: user.userTimelines } )
+            } else {
+                return res.json( { status: "problem retrieving basic info, from usersRouter "} )
+            }
+        } )
+        .catch( err => res.send( err ) ); 
+    })
+ 
+
+router.route( '/users/register' )
+    .post( ( req, res ) => {  
+        console.log( '[ userRouter ] registration with request ', req.body ); 
+        if( !req.body.userName || !req.body.userEmail || !req.body.userPassword ) {
+        return res.status(400).json( { success: false, message: 'Please complete the entire form.' } );
+        } else {
+        user.findOne( {
+            email: req.body.userEmail 
+        }).then( foundUser => { 
+            if ( foundUser ){
+                console.log( '[ userRouter ] found user ', foundUser ); 
+                return res.status(400).json({ success: false, message: 'That email address already exists.'});
+            } else {
+                user.create( {
+                    name: req.body.userName,   
+                    email: req.body.userEmail,
+                    password: req.body.userPassword,
+                } ).then( ( createdUser ) => { 
+                        console.log( ' [ usersRouter ] created user ', createdUser );
+                        return res.json( { status: "Success", message: "Created New User" } );
+                    } )
+                    .catch( err => res.send( { message: "error creating user" } ) )
+                } 
+            })
+            .catch( err => res.send( { message: "error with found user" } ) )
+        }
 });
+
 
 
 

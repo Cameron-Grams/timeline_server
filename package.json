@@ -18,10 +18,15 @@
   },
   "homepage": "https://github.com/Cameron-Grams/timeline_server#readme",
   "dependencies": {
+    "bcrypt": "^1.0.3",
     "body-parser": "^1.18.2",
     "express": "^4.16.2",
+    "jsonwebtoken": "^8.1.1",
+    "mongoose": "^5.0.5",
     "node": "^9.3.0",
     "nodemon": "^1.14.7",
+    "passport": "^0.4.0",
+    "passport-jwt": "^3.0.1",
     "react-router-redux": "^4.0.8"
   }
 }
