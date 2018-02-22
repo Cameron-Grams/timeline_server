@@ -68,9 +68,12 @@ router.route( '/timelines/new-timeline/:userId')
                     userId: req.params.userId,
                     Entries: [ ]
                 })
+
                 .then( createdTimeline => { 
-                    user.findOneAndUpdate( { "_id": req.params.userId }, 
-                        { $push: { userTimelines: { $each: [ createdTimeline._id ] } }}, { new: true } )
+                    console.log( ' timelineRouter, createdTimeline ', createdTimeline ); 
+                    user.findByIdAndUpdate( req.params.userId, { $push: { userTimelines: createdTimeline._id } }, { new: true } )
+//                    user.findOneAndUpdate( { "_id": req.params.userId }, 
+//                        { $push: { userTimelines: { $each: [ createdTimeline._id ] } }}, { new: true } )
                         .then( () => res.json( createdTimeline ) ) 
                 } )
                .catch( err => res.status( 400 ).send( err ) );

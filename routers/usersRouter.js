@@ -18,40 +18,40 @@ router.route('/users/login')
         } )
         .populate( "userTimelines" )
         .then( ( foundUser ) => {
-            const isAuthorized = foundUser.comparePassword( req.body.userPassword ); 
+            foundUser.comparePassword( req.body.userPassword )
+            .then( ( isAuthorized ) => {
+                if (!isAuthorized) {
+                    return res.status(400).json({
+                        generalMessage: 'Email or password is incorrect',
+                    });
+                }
+                const tokenPayload = {
+                    _id: foundUser._id,
+                    email: foundUser.email,
+                    userName: foundUser.name,
+                };
 
-            if (!isAuthorized) {
-                return res.status(400).json({
-                    generalMessage: 'Email or password is incorrect',
+                const token = jwt.sign( tokenPayload, SECRET, {
+                    expiresIn: EXPIRATION,
                 });
-            }
-            const tokenPayload = {
-                _id: foundUser._id,
-                email: foundUser.email,
-                userName: foundUser.name,
-                userTimelines: foundUser.userTimelines,
-            };
 
-            const token = jwt.sign( tokenPayload, SECRET, {
-                expiresIn: EXPIRATION,
-            });
-
-            return res.json( { 
-                token: `Bearer ${token}`,
-                _id: foundUser._id,
-                name: foundUser.name,
-                timelines: foundUser.userTimelines
-            });
+                return res.json( { 
+                    token: `Bearer ${token}`,
+                    _id: foundUser._id,
+                    name: foundUser.name,
+                    timelines: foundUser.userTimelines
+                });
+            }  )
         })
         .catch( err => res.status(400).json( err ) );
     });
 
 router.route( '/users/basicInfo' )
-    .post( passport.authenticate('jwt', { session: false }), (req, res) => { 
-        console.log( '[ usersRouter ] current req body ', req.body ); 
+    .get( passport.authenticate('jwt', { session: false }), (req, res) => { 
+        console.log( '[ usersRouter ] current req body ', req.user._id ); 
 
         user.findOne( {
-            userId: req.body.userId
+            userId: req.user._id
         } )
         .then( user => {
             if ( user ){
