@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const express = require('express');
 const bodyParser = require('body-parser');
 
-const { PORT, DATABASE_URL, SECRET } = require( '../Config/config' ); 
+const { PORT, DATABASE_URL, SECRET, EXPIRATION } = require( '../Config/config' ); 
 const router = express.Router();
 const jsonParser = bodyParser.json();
 const { user } = require( '../models/userModel' );
@@ -12,37 +12,44 @@ var jwt = require('jsonwebtoken');
 
 router.route('/users/login')
     .post( ( req, res ) => {  
-        console.log( '[ userRouter ] sent request ', req.body );
 
         user.findOne( { 
             email: req.body.userEmail
         } )
         .populate( "userTimelines" )
-        .then( 
-         user => {
-            console.log( '[ userRouter ] found user: ', user ) 
-            if ( !user ){
-                res.status( 400 ).send( { success: false, message: 'Authentication failed. User not found, ERROR 1.' } );
-            } else {
-                user.comparePassword( req.body.password, ( err, isMatch ) => {
-                    if ( isMatch && !err ){
-                        var token = jwt.sign( 
-                            { id: user._id, userName: user.name }, 
-                            SECRET, {
-                            expiresIn: 600000000
-                        } );
-                        res.json( { success: true, token: 'Bearer ' + token, _id: user._id } );
-                    } else {
-                        res.status( 400 ).send( { success: false, message: 'Authentication failed. User not found.' } );
-                    }
-                })
+        .then( ( foundUser ) => {
+            const isAuthorized = foundUser.comparePassword( req.body.userPassword ); 
+
+            if (!isAuthorized) {
+                return res.status(400).json({
+                    generalMessage: 'Email or password is incorrect',
+                });
             }
-        } ).catch( err => res.send( err ) );
-  
+            const tokenPayload = {
+                _id: foundUser._id,
+                email: foundUser.email,
+                userName: foundUser.name,
+                userTimelines: foundUser.userTimelines,
+            };
+
+            const token = jwt.sign( tokenPayload, SECRET, {
+                expiresIn: EXPIRATION,
+            });
+
+            return res.json( { 
+                token: `Bearer ${token}`,
+                _id: foundUser._id,
+                name: foundUser.name,
+                timelines: foundUser.userTimelines
+            });
+        })
+        .catch( err => res.status(400).json( err ) );
     });
 
 router.route( '/users/basicInfo' )
     .post( passport.authenticate('jwt', { session: false }), (req, res) => { 
+        console.log( '[ usersRouter ] current req body ', req.body ); 
+
         user.findOne( {
             userId: req.body.userId
         } )
@@ -76,7 +83,7 @@ router.route( '/users/register' )
                     password: req.body.userPassword,
                 } ).then( ( createdUser ) => { 
                         console.log( ' [ usersRouter ] created user ', createdUser );
-                        return res.json( createdUser );
+                        return res.json( { status: "Success", message: "Created New User" } );
                     } )
                     .catch( err => res.send( { message: "error creating user" } ) )
                 } 
