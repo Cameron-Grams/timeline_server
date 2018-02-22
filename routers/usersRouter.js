@@ -48,10 +48,8 @@ router.route('/users/login')
 
 router.route( '/users/basicInfo' )
     .get( passport.authenticate('jwt', { session: false }), (req, res) => { 
-        console.log( '[ usersRouter ] current req body ', req.user._id ); 
-
         user.findOne( {
-            userId: req.user._id
+            _id: req.user._id
         } )
         .then( user => {
             if ( user ){
@@ -62,7 +60,6 @@ router.route( '/users/basicInfo' )
         } )
         .catch( err => res.send( err ) ); 
     })
- 
 
 router.route( '/users/register' )
     .post( ( req, res ) => {  
