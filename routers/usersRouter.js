@@ -63,7 +63,6 @@ router.route( '/users/basicInfo' )
 
 router.route( '/users/register' )
     .post( ( req, res ) => {  
-        console.log( '[ userRouter ] registration with request ', req.body ); 
         if( !req.body.userName || !req.body.userEmail || !req.body.userPassword ) {
         return res.status(400).json( { success: false, message: 'Please complete the entire form.' } );
         } else {
@@ -71,7 +70,6 @@ router.route( '/users/register' )
             email: req.body.userEmail 
         }).then( foundUser => { 
             if ( foundUser ){
-                console.log( '[ userRouter ] found user ', foundUser ); 
                 return res.status(400).json({ success: false, message: 'That email address already exists.'});
             } else {
                 user.create( {
@@ -79,7 +77,6 @@ router.route( '/users/register' )
                     email: req.body.userEmail,
                     password: req.body.userPassword,
                 } ).then( ( createdUser ) => { 
-                        console.log( ' [ usersRouter ] created user ', createdUser );
                         return res.json( { status: "Success", message: "Created New User" } );
                     } )
                     .catch( err => res.send( { message: "error creating user" } ) )

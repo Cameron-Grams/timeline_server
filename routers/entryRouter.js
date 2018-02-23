@@ -25,10 +25,20 @@ router.route('/entries/:timelineId')
                 source: req.body.source
         } )
         .then( entry => {
-            timeline.findOneAndUpdate( { "_id": req.params.timelineId }, 
-                { $push: { entries: { $each: [ entry ], $sort: { dateObject: 1 } } }}, { new: true } )
-           .then( ( updated ) => {  return res.json( updated ) } )
-           .catch( err => { return res.json( err ) } ); 
+            timeline.findOne( {
+                "_id": req.params.timelineId
+            })
+            .populate( "entries" )        
+            .then( foundTimeline => {   
+                console.log( '[ entryROuter ] found TL ', foundTimeline ); 
+                timeline.findOneAndUpdate( { "_id": req.params.timelineId }, 
+                    { $push: { entries: { $each: [ entry ], $sort: { dateObject: 1 } } }}, { new: true } )
+                    .then( ( updated ) => {  
+                        console.log( '[ entryRouter ] updated item ', updated ); 
+                        return res.json( updated ) } )
+                    .catch( err => { return res.json( err ) } ) 
+            } )
+            .catch( err => res.json( err ) ) 
         } )
         .catch( err => res.json( err ) ); 
     })
