@@ -30,11 +30,9 @@ router.route('/entries/:timelineId')
             })
             .populate( "entries" )        
             .then( foundTimeline => {   
-                console.log( '[ entryROuter ] found TL ', foundTimeline ); 
                 timeline.findOneAndUpdate( { "_id": req.params.timelineId }, 
                     { $push: { entries: { $each: [ entry ], $sort: { dateObject: 1 } } }}, { new: true } )
                     .then( ( updated ) => {  
-                        console.log( '[ entryRouter ] updated item ', updated ); 
                         return res.json( updated ) } )
                     .catch( err => { return res.json( err ) } ) 
             } )

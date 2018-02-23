@@ -16,11 +16,17 @@ var jwt = require('jsonwebtoken');
 // finds the requested timeline by id number    
 router.route( `/timelines` )
     .post( passport.authenticate('jwt', { session: false }), (req, res) => { 
+        console.log( '[ timelineRouter ] in timeline return ' ); 
         timeline.findOne( {
             _id: req.body.timelineId
         } )
         .populate( "entries" )
         .then( timeline => {
+// wouldn't have thought this would work...
+            const allEntries = timeline.entries;
+            allEntries.sort( ( first, second ) => {
+                return first.dateObject - second.dateObject;
+            })
             return res.json( timeline )            
         } )
         .catch( err => res.send( err ) ); 
