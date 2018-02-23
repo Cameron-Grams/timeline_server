@@ -1,70 +1,86 @@
 const mongoose = require('mongoose');
 const express = require('express');
 const bodyParser = require('body-parser');
-// var passport = require('passport');  
-//var jwt = require('jsonwebtoken'); 
-const { PORT, DATABASE_URL } = require( '../config' ); 
 
+const { PORT, DATABASE_URL, SECRET, EXPIRATION } = require( '../Config/config' ); 
 const router = express.Router();
 const jsonParser = bodyParser.json();
-const { User } = require( '../models/userModel' );
+const { user } = require( '../models/userModel' );
 
+var passport = require('passport');  
+var jwt = require('jsonwebtoken'); 
 
 router.route('/users/login')
     .post( ( req, res ) => {  
-        User.findOne( { 
+
+        user.findOne( { 
             email: req.body.userEmail
         } )
-        .then( user => {
-            if ( user.password === req.body.userPassword ){
-                user.token = "loggedIn"; 
-                return res.json( user ); 
-            } else {
-                return res.status( 400 ).json( { status: "bad password" } ); 
-            }
-        } )
-        .catch( err => res.send( err ) );  
+        .populate( "userTimelines" )
+        .then( ( foundUser ) => {
+            foundUser.comparePassword( req.body.userPassword )
+            .then( ( isAuthorized ) => {
+                if (!isAuthorized) {
+                    return res.status(400).json({
+                        generalMessage: 'Email or password is incorrect',
+                    });
+                }
+                const tokenPayload = {
+                    _id: foundUser._id,
+                    email: foundUser.email,
+                    userName: foundUser.name,
+                };
+
+                const token = jwt.sign( tokenPayload, SECRET, {
+                    expiresIn: EXPIRATION,
+                });
+
+                return res.json( { 
+                    token: `Bearer ${token}`,
+                    _id: foundUser._id,
+                    name: foundUser.name,
+                    timelines: foundUser.userTimelines
+                });
+            }  )
+        })
+        .catch( err => res.status(400).json( err ) );
     });
 
 router.route( '/users/basicInfo' )
-    .post( ( req, res ) => {
-
-        User.findOne( {
-            userId: req.body.userId
+    .get( passport.authenticate('jwt', { session: false }), (req, res) => { 
+        user.findOne( {
+            _id: req.user._id
         } )
         .then( user => {
-            if ( req.body.token ){
-                return res.json( { userId: user.userId, name: user.name, userTimelines: user.userTimelines } )
+            if ( user ){
+                return res.json( { userId: user._id, name: user.name, userTimelines: user.userTimelines } )
             } else {
                 return res.json( { status: "problem retrieving basic info, from usersRouter "} )
             }
         } )
         .catch( err => res.send( err ) ); 
     })
- 
 
-// this will change with the bcrypt
 router.route( '/users/register' )
     .post( ( req, res ) => {  
         console.log( '[ userRouter ] registration with request ', req.body ); 
         if( !req.body.userName || !req.body.userEmail || !req.body.userPassword ) {
         return res.status(400).json( { success: false, message: 'Please complete the entire form.' } );
         } else {
-        User.findOne( {
+        user.findOne( {
             email: req.body.userEmail 
         }).then( foundUser => { 
             if ( foundUser ){
                 console.log( '[ userRouter ] found user ', foundUser ); 
                 return res.status(400).json({ success: false, message: 'That email address already exists.'});
             } else {
-                User.create( {
+                user.create( {
                     name: req.body.userName,   
-                    userId: 8, 
                     email: req.body.userEmail,
                     password: req.body.userPassword,
                 } ).then( ( createdUser ) => { 
                         console.log( ' [ usersRouter ] created user ', createdUser );
-                        return res.json( createdUser );
+                        return res.json( { status: "Success", message: "Created New User" } );
                     } )
                     .catch( err => res.send( { message: "error creating user" } ) )
                 } 

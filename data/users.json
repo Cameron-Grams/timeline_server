@@ -1,34 +1,14 @@
  { token: "somestring",  
       name: 'DEMO',
-      userId: "1",
       email: 'demo@here.com',
       password: 'demo',
-      userTimelines: [
-        {        
-
-          title: 'History of Judo',
-          timelineId: 1
-        },
-        {
-          timelineId: 2, 
-          title: "Financial History of the United States"
-        }
-   ] 
+      userTimelines: [] 
+     
 }
 { 
     token: "someOtherString", 
     name: 'DEMO-2',
-    userId: "2",
     email: 'demo2@here.com',
     password: 'demo2',
-    userTimelines: [
-          {        
-        title: 'History of Judo',
-        timelineId: 1
-      },
-       {
-        timelineId: 3, 
-        title: "Timeline 3"
-      }
-    ] 
+    userTimelines:[] 
 }

@@ -4,4 +4,8 @@ exports.DATABASE_URL = process.env.DATABASE_URL ||
     global.DATABASE_URL ||
     'mongodb://localhost/timelinesDb'; 
 
+exports.SECRET = process.env.SECRET || "thelastthingyoudeverguess"; 
+
+exports.EXPIRATION = 600000000;
+
 
