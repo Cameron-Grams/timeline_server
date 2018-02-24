@@ -16,7 +16,6 @@ var jwt = require('jsonwebtoken');
 // finds the requested timeline by id number    
 router.route( `/timelines` )
     .post( passport.authenticate('jwt', { session: false }), (req, res) => { 
-        console.log( '[ timelineRouter ] in timeline return ' ); 
         timeline.findOne( {
             _id: req.body.timelineId
         } )
@@ -48,7 +47,6 @@ router.route( '/timelines/:userId')
                     Entries: [ ]
                 })
                 .then( createdTimeline => { 
-                    console.log( ' timelineRouter, createdTimeline ', createdTimeline ); 
                     user.findByIdAndUpdate( req.params.userId, { $push: { userTimelines: createdTimeline._id } }, { new: true } )
                         .then( () => res.json( createdTimeline ) ) 
                 } )
