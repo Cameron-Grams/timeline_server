@@ -36,6 +36,7 @@ router.route('/users/login')
                     expiresIn: EXPIRATION,
                 });
 
+                console.log( '[ userRouter ] login info for payload ', tokenPayload ); 
                 return res.json( { 
                     token: `Bearer ${token}`,
                     _id: foundUser._id,
@@ -55,7 +56,7 @@ router.route( '/users/basicInfo' )
         .populate( "userTimelines" )
         .then( user => {
             if ( user ){
-                console.log( '[ userRouter ] user info ', user.userTimelines ); 
+                console.log( '[ userRouter ] user info from Basic Info ', user ); 
 
                 return res.json( { _id: user._id, name: user.name, userTimelines: user.userTimelines } )
             } else {
