@@ -55,7 +55,7 @@ router.route( '/users/basicInfo' )
         .populate( "userTimelines" )
         .then( user => {
             if ( user ){
-                console.log( '[ userRouter ] user info ', user ); 
+                console.log( '[ userRouter ] user info ', user.userTimelines ); 
 
                 return res.json( { _id: user._id, name: user.name, userTimelines: user.userTimelines } )
             } else {
