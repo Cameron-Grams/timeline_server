@@ -12,7 +12,6 @@ var jwt = require('jsonwebtoken');
 
 router.route('/users/login')
     .post( ( req, res ) => {  
-        console.log( '[ usersRouter ] in login ' );
 
         user.findOne( { 
             email: req.body.userEmail
@@ -36,7 +35,6 @@ router.route('/users/login')
                     expiresIn: EXPIRATION,
                 });
 
-                console.log( '[ userRouter ] login info for payload ', tokenPayload ); 
                 return res.json( { 
                     token: `Bearer ${token}`,
                     _id: foundUser._id,
@@ -56,9 +54,7 @@ router.route( '/users/basicInfo' )
         .populate( "userTimelines" )
         .then( user => {
             if ( user ){
-                console.log( '[ userRouter ] user info from Basic Info ', user ); 
-
-                return res.json( { _id: user._id, name: user.name, userTimelines: user.userTimelines } )
+                return res.json( { _id: user._id, name: user.name, timelines: user.userTimelines } )
             } else {
                 return res.json( { status: "problem retrieving basic info, from usersRouter "} )
             }
@@ -68,8 +64,6 @@ router.route( '/users/basicInfo' )
 
 router.route( '/users/register' )
     .post( ( req, res ) => {  
-        console.log( '[ usersRouter ] in register ' );
-
         if( !req.body.userName || !req.body.userEmail || !req.body.userPassword ) {
         return res.status(400).json( { success: false, message: 'Please complete the entire form.' } );
         } else {
