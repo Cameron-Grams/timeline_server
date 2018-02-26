@@ -69,6 +69,16 @@ router.route('/entries/:entryId')
             { "$pull": { "entries": req.params.entryId } },
         ).then(() => entry.findByIdAndRemove(req.params.entryId))
         .then( 
+            res.status( 200 ).json( { "targetTimeline": req.body.timelineId } )
+        )
+        .catch(err => res.json(err))
+    });
+
+module.exports = router;
+
+
+/*
+     .then( 
             timeline.findOne( { "_id": req.body.timelineId } )
                 .then( timeline => { 
                 console.log( '[ entryRouter ] timeline wo entry ', timeline )
@@ -77,54 +87,4 @@ router.route('/entries/:entryId')
                 .catch( err => res.json( err ) )
         )
         .catch(err => res.json(err))
-    });
-
-
-
-
-
- /*   
-router.route( '/entries/update/:timelineId')
-   .put( passport.authenticate('jwt', { session: false }), (req, res) => { 
-       console.log( '[ entryROuter ] PUT to update entry with ', req.body );
-
-        entry.updateOne(
-            { _id: req.params.timelineId,
-            "entries": { $elemMatch: { "_id": { $eq: req.body._id } } } },
-            { $set: { "entries.$": { 
-                title: req.body.title,
-                what: req.body.what,
-                dateObject: req.body.dateObject,
-                date: req.body.date,
-                who: req.body.who,
-                where: req.body.where,
-                content: req.body.content,
-                source: req.body.source
-             } } }
-        )
-        .then( entry => {
-            console.log( '[ entryRouter ] updated entry ', entry ); 
-            return res.json( entry );  
-        } )
-        .catch( err => res.json( err ) ); 
-    } );
-
-router.route( '/entries/delete/:timelineId')
-   .delete( passport.authenticate('jwt', { session: false }), (req, res) => { 
-       console.log( '[ entryRouter ] delete to update entry with ', req.body );
-
-        entry.delete(
-            { _id: req.params.entryId }, { } 
-        )
-        .then(
-            timeline.findByIdAndRemove(
-                { "entries.$": { $elemMatch: { "_id": req.body._id } } }, { }
-            )
-            .then( timeline => { return res.json( timeline ) } )
-            .catch( err => res.json( err ) )
-        )
-        .catch( err => res.json( err ) ); 
-    } );
 */
-
-module.exports = router;
