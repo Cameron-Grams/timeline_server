@@ -32,6 +32,7 @@ router.route('/entries/:timelineId')
             .then( foundTimeline => {   
                 timeline.findOneAndUpdate( { "_id": req.params.timelineId }, 
                     { $push: { entries: { $each: [ entry ], $sort: { dateObject: 1 } } }}, { new: true } )
+                    .populate( "entries" )
                     .then( ( updated ) => {  
                         return res.json( updated ) } )
                     .catch( err => { return res.json( err ) } ) 
@@ -41,10 +42,13 @@ router.route('/entries/:timelineId')
         .catch( err => res.json( err ) ); 
     })
     
+router.route( '/entries/update/:timelineId')
    .put( passport.authenticate('jwt', { session: false }), (req, res) => { 
+       console.log( '[ entryROuter ] PUT to update entry with ', req.body );
+
         entry.updateOne(
             { _id: req.params.timelineId,
-            "Entries": { $elemMatch: { "entryId": { $eq: req.body.entryId } } } },
+            "Entries": { $elemMatch: { "_id": { $eq: req.body._id } } } },
             { $set: { "Entries.$": { 
                 title: req.body.title,
                 what: req.body.what,
@@ -56,8 +60,10 @@ router.route('/entries/:timelineId')
                 source: req.body.source
              } } }
         )
-        .then( entry => res.json( entry ) )
+        .then( entry => {
+            return res.json( entry ) 
+        } )
+        .catch( err => res.json( err ) ); 
     } );
-
 
 module.exports = router;
