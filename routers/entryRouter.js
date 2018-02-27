@@ -37,29 +37,28 @@ router.route('/entries/:entryId')
     } )
 
    .put( passport.authenticate('jwt', { session: false }), (req, res) => { 
-       console.log( '[ entryROuter ] PUT to update entry with ', req.body );
+       console.log( '[ entryROuter ] PUT to update entry with ', req.body, ' and params ', req.params );
 
         entry.updateOne(
-            { _id: req.params.timelineId,
-            "entries": { $elemMatch: { "_id": { $eq: req.body._id } } } },
-            { $set: { "entries.$": { 
-                title: req.body.title,
-                what: req.body.what,
-                dateObject: req.body.dateObject,
-                date: req.body.date,
-                who: req.body.who,
-                where: req.body.where,
-                content: req.body.content,
-                source: req.body.source
-             } } }
+            { _id: req.params.entryId },
+                { $set: { 
+                    title: req.body.title,
+                    what: req.body.what,
+                    dateObject: req.body.dateObject,
+                    date: req.body.date,
+                    who: req.body.who,
+                    where: req.body.where,
+                    content: req.body.content,
+                    source: req.body.source
+                    }
+                }
         )
-        .then( entry => {
-            console.log( '[ entryRouter ] updated entry ', entry ); 
-            return res.json( entry );  
+        .then( ( item ) => {
+           res.json( { _id: req.params.entryId, ...req.body } );  
         } )
         .catch( err => res.json( err ) ); 
     } )
-
+// first sort out update, second sort out return values... 
     // return auth... 
    .delete( passport.authenticate('jwt', { session: false }), (req, res) => { 
        console.log( '[ entryRouter ] in DELETE with ', req.body );
@@ -69,7 +68,7 @@ router.route('/entries/:entryId')
             { "$pull": { "entries": req.params.entryId } },
         ).then(() => entry.findByIdAndRemove(req.params.entryId))
         .then( 
-            res.status( 200 ).json( { "targetTimeline": req.body.timelineId } )
+            res.status( 200 ).json( { _id: req.params.entryId } )
         )
         .catch(err => res.json(err))
     });
