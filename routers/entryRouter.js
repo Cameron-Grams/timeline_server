@@ -26,6 +26,7 @@ router.route('/entries/:entryId')
                 source: req.body.source
         } )
         .then( ( entry ) => {
+            console.log( '[ entryRouter ] entry: ', entry ); 
             timeline.findByIdAndUpdate( { "_id": req.body.timelineId },
                 { $push: { entries: { $each: [ entry ], $sort: { dateObject: 1 } } }}, { new: true } )
                 .populate( "entries" )

@@ -30,7 +30,6 @@ router.route( `/timelines` )
         } )
         .catch( err => res.send( err ) ); 
     });
-
 //creates a new id with the userId associated
 router.route( '/timelines/:userId')
     .post( passport.authenticate('jwt', { session: false }), (req, res) => { 
