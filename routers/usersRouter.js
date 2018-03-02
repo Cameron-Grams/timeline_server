@@ -6,12 +6,13 @@ const { PORT, DATABASE_URL, SECRET, EXPIRATION } = require( '../Config/config' )
 const router = express.Router();
 const jsonParser = bodyParser.json();
 const { user } = require( '../models/userModel' );
+const requiredFields = require( '../Middleware/requiredFields' );
 
 var passport = require('passport');  
 var jwt = require('jsonwebtoken'); 
 
 router.route('/users/login')
-    .post( ( req, res ) => {  
+    .post( requiredFields( "userEmail", "userPassword" ), ( req, res ) => {  
 
         user.findOne( { 
             email: req.body.userEmail
@@ -63,10 +64,7 @@ router.route( '/users/basicInfo' )
     })
 
 router.route( '/users/register' )
-    .post( ( req, res ) => {  
-        if( !req.body.userName || !req.body.userEmail || !req.body.userPassword ) {
-        return res.status(400).json( { success: false, message: 'Please complete the entire form.' } );
-        } else {
+    .post( requiredFields( "userName", "userEmail", "userPassword" ), ( req, res ) => {  
         user.findOne( {
             email: req.body.userEmail 
         }).then( foundUser => { 
@@ -85,7 +83,7 @@ router.route( '/users/register' )
             })
             .catch( err => res.send( { message: "error with found user" } ) )
         }
-});
+);
 
 
 

@@ -8,11 +8,13 @@ const router = express.Router();
 const jsonParser = bodyParser.json();
 const { entry } = require( '../models/entryModel' );
 const { timeline } = require( '../models/timelineModel' ); 
+const requiredFields = require( '../Middleware/requiredFields' );
+
+const requiredEntryFields = [ "title", "what", "date", "who", "where", "content", "source" ];  
 
 // adds entries to the timeline by the timeline Id
 router.route('/entries/:entryId')
-    .post( passport.authenticate('jwt', { session: false }), (req, res) => { 
-        console.log( '[ entryRouter ] in the POST' ); 
+    .post( passport.authenticate('jwt', { session: false }), requiredFields( ...requiredEntryFields ), (req, res) => { 
         const dateArray = req.body.date.split( '/' );
         const recordDate = new Date( dateArray[ 2 ], dateArray[ 0 ], dateArray[ 1 ] ); 
         entry.create( {
@@ -26,7 +28,6 @@ router.route('/entries/:entryId')
                 source: req.body.source
         } )
         .then( ( entry ) => {
-            console.log( '[ entryRouter ] entry: ', entry ); 
             timeline.findByIdAndUpdate( { "_id": req.body.timelineId },
                 { $push: { entries: { $each: [ entry ], $sort: { dateObject: 1 } } }}, { new: true } )
                 .populate( "entries" )
@@ -37,8 +38,7 @@ router.route('/entries/:entryId')
         .catch( err => res.json( err ) ) 
     } )
 
-   .put( passport.authenticate('jwt', { session: false }), (req, res) => { 
-       console.log( '[ entryROuter ] PUT to update entry with ', req.body, ' and params ', req.params );
+   .put( passport.authenticate('jwt', { session: false }), requiredFields( ...requiredEntryFields ), (req, res) => { 
 
         entry.updateOne(
             { _id: req.params.entryId },
@@ -59,11 +59,8 @@ router.route('/entries/:entryId')
         } )
         .catch( err => res.json( err ) ); 
     } )
-// first sort out update, second sort out return values... 
-    // return auth... 
-   .delete( passport.authenticate('jwt', { session: false }), (req, res) => { 
-       console.log( '[ entryRouter ] in DELETE with ', req.body );
 
+   .delete( passport.authenticate('jwt', { session: false }), (req, res) => { 
         timeline.update(
             { "entries": req.params.entryId },
             { "$pull": { "entries": req.params.entryId } },
@@ -75,16 +72,3 @@ router.route('/entries/:entryId')
     });
 
 module.exports = router;
-
-
-/*
-     .then( 
-            timeline.findOne( { "_id": req.body.timelineId } )
-                .then( timeline => { 
-                console.log( '[ entryRouter ] timeline wo entry ', timeline )
-                return res.json( timeline )
-                })
-                .catch( err => res.json( err ) )
-        )
-        .catch(err => res.json(err))
-*/

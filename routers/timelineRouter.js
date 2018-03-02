@@ -12,6 +12,7 @@ const { entry } = require( '../models/entryModel' );
 
 var passport = require('passport');  
 var jwt = require('jsonwebtoken');
+const requiredFields = require( '../Middleware/requiredFields' );
 
 // finds the requested timeline by id number    
 router.route( `/timelines` )
@@ -30,9 +31,11 @@ router.route( `/timelines` )
         } )
         .catch( err => res.send( err ) ); 
     });
+
+
 //creates a new id with the userId associated
 router.route( '/timelines/:userId')
-    .post( passport.authenticate('jwt', { session: false }), (req, res) => { 
+    .post( passport.authenticate('jwt', { session: false }), requiredFields( "timelineTitle"), (req, res) => { 
         timeline.findOne( {
             title: req.body.timelineTitle
         })
