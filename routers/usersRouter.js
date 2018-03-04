@@ -12,7 +12,7 @@ var passport = require('passport');
 var jwt = require('jsonwebtoken'); 
 
 router.route('/users/login')
-    .post( requiredFields( "userEmail", "userPassword" ), ( req, res ) => {  
+    .post( requiredFields( "userEmail", "userPassword" ), requiredFields( "userEmail", "userPassword" ), ( req, res ) => {  
 
         user.findOne( { 
             email: req.body.userEmail

@@ -36,6 +36,8 @@ router.route( `/timelines` )
 //creates a new id with the userId associated
 router.route( '/timelines/:userId')
     .post( passport.authenticate('jwt', { session: false }), requiredFields( "timelineTitle"), (req, res) => { 
+        console.log( '[ timelineRouter ] inbound request ', req.body );
+
         timeline.findOne( {
             title: req.body.timelineTitle
         })
