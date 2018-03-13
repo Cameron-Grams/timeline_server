@@ -38,6 +38,7 @@ router.route('/entries/:entryId')
         .catch( err => res.json( err ) ) 
     } )
 
+// updates a single entry based on the PUT call with values
    .put( passport.authenticate('jwt', { session: false }), requiredFields( ...requiredEntryFields ), (req, res) => { 
 
         entry.updateOne(
