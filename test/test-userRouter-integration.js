@@ -13,26 +13,35 @@ const { app, runServer, closeServer } = require( '../index' );
 const { PORT, TEST_DATABASE_URL, TEST_SECRET } = require( '../Config/config' );
 
 describe( "Tests the User Router functionality", () => {
-    const setUp = "So set up...";
-
+    
     function tearDownDb() {   
         return new Promise ((resolve, reject) => {     
-        console.warn('Deleting database');     
-        mongoose.connection.dropDatabase()       
-        .then(result => resolve(result))       
-        .catch(err => reject(err));   }); }
-    console.log( 'port and url', PORT, TEST_DATABASE_URL );
+            console.warn('Deleting database');     
+            mongoose.connection.dropDatabase()       
+            .then(result => resolve(result))       
+            .catch(err => reject(err));   }); 
+        }
 
-    before( () => runServer( PORT, TEST_DATABASE_URL ) );
-    
-    afterEach( () => tearDownDb() )    
-    
-    
-    after( () => closeServer( TEST_DATABASE_URL ) ); 
+    before( () => {
+        console.log( 'Beginning User specific tests on port and url', PORT, TEST_DATABASE_URL );
+        runServer( PORT, TEST_DATABASE_URL )
+        const testUser = {
+            name: "I am tester",
+            email: "test@here.com",
+            password: "readyplayerone"
+        };
 
-    it( 'recognizes testing...', () => {
-        console.log( "in userRouter integration: ", setUp ); 
-    })
+        return user.create( testUser )
+            .then( ( tUser ) => { console.log( 'test user created: ' ) } )
+            .catch( console.log( "Problems...nothing but problems" ) );
+    } );
+
+    after( () => {
+        tearDownDb();
+        closeServer( TEST_DATABASE_URL );
+    } ); 
+
+
 
     describe( "User registration", () => {
         it( 'registers a new user', () => {
@@ -42,8 +51,6 @@ describe( "Tests the User Router functionality", () => {
                     userPassword: "colddayinmarch"
                 };
 
-                console.log( 'before' );
-
                 return chai.request( app )
                     .post( '/api/users/register' )
                     .send( newUserOne )
@@ -52,7 +59,24 @@ describe( "Tests the User Router functionality", () => {
                         expect( res.body ).to.have.keys( "status", "message" );
                         expect( res.body.status ).to.equal( "Success" );
                     } )
-                console.log( 'after' ); 
             })
+        });
+    
+    describe( "Manages a known user", () => {
+
+
+        it( "logs in a user with proper credentials", () => {
+            const userRequest = {
+                userEmail: "test@here.com",
+                userPassword: "readyplayerone"
+            };
+
+            return chai.request( app )
+                .post( '/api/users/login' )
+                .send( userRequest )
+                .then( function( res ){
+                    expect( res ).to.be.json;
+                })
         })
+    })
 })
