@@ -15,8 +15,19 @@ const { PORT, TEST_DATABASE_URL, TEST_SECRET } = require( '../Config/config' );
 describe( "Tests the User Router functionality", () => {
     const setUp = "So set up...";
 
-    before( () => runServer( PORT, TEST_DATABASE_URL ) );
+    function tearDownDb() {   
+        return new Promise ((resolve, reject) => {     
+        console.warn('Deleting database');     
+        mongoose.connection.dropDatabase()       
+        .then(result => resolve(result))       
+        .catch(err => reject(err));   }); }
+    console.log( 'port and url', PORT, TEST_DATABASE_URL );
 
+    before( () => runServer( PORT, TEST_DATABASE_URL ) );
+    
+    afterEach( () => tearDownDb() )    
+    
+    
     after( () => closeServer( TEST_DATABASE_URL ) ); 
 
     it( 'recognizes testing...', () => {
@@ -31,19 +42,17 @@ describe( "Tests the User Router functionality", () => {
                     userPassword: "colddayinmarch"
                 };
 
-                const sendData = JSON.stringify( newUserOne );
+                console.log( 'before' );
 
                 return chai.request( app )
                     .post( '/api/users/register' )
-                    .set( { 'Content-type': 'application/json' } )
-                    .send( sendData )
-                    .end( function( res ){
-                        console.log( 'response to the send of a new user', res ); 
+                    .send( newUserOne )
+                    .then( function( res ){
                         expect( res ).to.be.json;
                         expect( res.body ).to.have.keys( "status", "message" );
                         expect( res.body.status ).to.equal( "Success" );
-                        done();
                     } )
+                console.log( 'after' ); 
             })
         })
 })
