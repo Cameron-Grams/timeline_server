@@ -31,10 +31,10 @@ app.use( '/api', entryRouter );
 
 let server;
 
-function runServer( port=PORT ) {
+function runServer( port=PORT, database=DATABASE_URL ) {
 
     return new Promise( ( resolve, reject ) => {
-        mongoose.connect( DATABASE_URL, err  => {
+        mongoose.connect( database, err  => {
             if ( err ){
                 return reject( err ); 
             }
