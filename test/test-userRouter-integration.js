@@ -14,6 +14,8 @@ const { PORT, TEST_DATABASE_URL, TEST_SECRET } = require( '../Config/config' );
 
 describe( "Tests the User Router functionality", () => {
     
+    let accessibleUser;
+
     function tearDownDb() {   
         return new Promise ((resolve, reject) => {     
             console.warn('Deleting database');     
@@ -26,13 +28,16 @@ describe( "Tests the User Router functionality", () => {
         console.log( 'Beginning User specific tests on port and url', PORT, TEST_DATABASE_URL );
         runServer( PORT, TEST_DATABASE_URL )
         const testUser = {
-            name: "I am tester",
+            name: "HEY MAN!",
             email: "test@here.com",
             password: "readyplayerone"
         };
-
+        
         return user.create( testUser )
-            .then( ( tUser ) => { console.log( 'test user created: ' ) } )
+            .then( ( tUser ) => { 
+                accessibleUser = tUser; 
+                console.log( 'test user created: ' ) 
+            } )
             .catch( console.log( "Problems...nothing but problems" ) );
     } );
 
@@ -77,6 +82,22 @@ describe( "Tests the User Router functionality", () => {
                 .then( function( res ){
                     expect( res ).to.be.json;
                 })
+        });
+
+        it( "should return basic information if the user has a token", ( ) => {
+            const token = jwt.sign( { _id: accessibleUser._id, email: accessibleUser.email, userName: accessibleUser.name }, TEST_SECRET, { expiresIn: 10000 });
+            console.log( 'accessible user with token: ', token );
+
+            return chai.request( app )
+                .get( "/api/users/basicInfo" )
+                .set( 'Authorization', `Bearer ${ token }` )
+                .then( ( res ) => {
+                    console.log( 'whats up: ', res )
+                    expect( res ).to.be.json;
+                })
         })
     })
 })
+
+
+//  , name: testUser.name, timelines: testUser.userTimelines
