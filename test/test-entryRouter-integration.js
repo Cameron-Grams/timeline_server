@@ -52,40 +52,28 @@ describe( "Tests the Entry Router functionality", () => {
             source: "someplace"
         }
         
-        return user.create( testUserObject )
-            .then( ( testUser ) => { 
-                console.log( ' are we in test user? ', testUser._id );
+        user.create( testUserObject )
+        .then( newUser => {
+            accessibleUser = newUser;
+        } )
 
-                accessibleUser = testUser; 
-                return testUser;
+        return timeline.create( {
+                title: "first dummy TL",
+                Entries: [ ]
             } )
-                .then( ( testUser ) => {
-                    return timeline.create( {
-                        title: "first dummy TL",
-                        userId: testUser._id,
-                        Entries: [ ]
+            .then( createdTimeline => { 
+                accessibleTimelineId = createdTimeline._id; 
+                return entry.create( testEntry )
+                    .then( ( entry ) => {
+                        accessibleEntry = entry;
+                        timeline.findByIdAndUpdate( { "_id": createdTimeline._id },
+                        { $push: { entries: { $each: [ entry ], $sort: { dateObject: 1 } } }}, { new: true } )
+                        .populate( "entries" )
+                        .then( updatedTimeline => {
+                            return updatedTimeline;
+                        })
                     } )
                 } )
-                    .then( createdTimeline => { 
-                        user.findByIdAndUpdate( accessibleUser._id, { $push: { userTimelines: createdTimeline._id } }, { new: true } )
-                            .then( () => {
-                                accessibleTimelineId = createdTimeline._id; 
-                                entry.create( testEntry )
-                                .then( ( entry ) => {
-                                    timeline.findByIdAndUpdate( { "_id": createdTimeline._id },
-                                        { $push: { entries: { $each: [ entry ], $sort: { dateObject: 1 } } }}, { new: true } )
-                                        .populate( "entries" )
-                                        .then( ( updated ) => {  
-                                            console.log( 'WORKING UPDATED IS ', updated );
-                                            return updated;
-                                        } )
-                                }) 
-                            } ) 
-                            .catch( err => err )
-                    } )
-                    .catch( err => err )
-                .catch( err => err )
-            .catch( console.log( "Problems...probably not news" ) );
     })
 
 
@@ -105,6 +93,28 @@ describe( "Tests the Entry Router functionality", () => {
         it( 'should create a new timeline for the user', () => {
             const token = jwt.sign( { _id: accessibleUser._id, email: accessibleUser.email, userName: accessibleUser.name }, SECRET, { expiresIn: 10000 });
             console.log( 'in first entry test.... ' );     
+
+            const newRecordDate = Date.now();
+            const newTestEntry = {
+                timelineId: accessibleTimelineId,
+                title: "new something important",
+                what: "new something cool",
+                dateObject: newRecordDate,
+                date: "1/2/2020",
+                who: "new someone",
+                where: "new somewhere",
+                content: "new something",
+                source: "new someplace"
+            }
+    
+            return chai.request( app )
+            .post( `/api/entries/${ accessibleTimelineId }` )
+            .set( 'Authorization', `Bearer ${ token }` )
+            .send( newTestEntry )
+            .then( res => {
+                expect( res ).to.be.json;
+            })
+
         });
     });
 
