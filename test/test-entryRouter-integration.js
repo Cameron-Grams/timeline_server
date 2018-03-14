@@ -32,7 +32,6 @@ describe( "Tests the Entry Router functionality", () => {
         runServer( PORT, TEST_DATABASE_URL )
     } );
 
-
     beforeEach( () => {
         const testUserObject = {
             name: "Wake Up!",
@@ -76,12 +75,8 @@ describe( "Tests the Entry Router functionality", () => {
                 } )
     })
 
-
-
-
-
     afterEach( () => {
-        tearDownDb();
+       tearDownDb();
     });
 
     after( () => {
@@ -92,8 +87,6 @@ describe( "Tests the Entry Router functionality", () => {
             
         it( 'should create a new timeline for the user', () => {
             const token = jwt.sign( { _id: accessibleUser._id, email: accessibleUser.email, userName: accessibleUser.name }, SECRET, { expiresIn: 10000 });
-            console.log( 'in first entry test.... ' );     
-
             const newRecordDate = Date.now();
             const newTestEntry = {
                 timelineId: accessibleTimelineId,
@@ -114,70 +107,35 @@ describe( "Tests the Entry Router functionality", () => {
             .then( res => {
                 expect( res ).to.be.json;
             })
-
         });
-    });
+    } );
 
+   describe( " test for entry update", () => {
+        it( 'should update an entry for the user', () => {
+            const secondToken = jwt.sign( { _id: accessibleUser._id, email: accessibleUser.email, userName: accessibleUser.name }, SECRET, { expiresIn: 10000 });
+            const secondRecordDate = Date.now();
+            const secondTestEntry = {
+                title: "new something important",
+                what: "new something cool",
+                dateObject: secondRecordDate,
+                date: "1/2/2020",
+                who: "new someone",
+                where: "new somewhere",
+                content: "new something",
+                source: "new someplace"
+            };
+   
+            const desiredEnpoint = accessibleEntry._id;
 
-
-
-
-
-
-
-
-})
-
-
-
-
-
-
-/*
-    describe( "entry creation", () => {
-            
-        it( 'should create a new timeline for the user', () => {
-            const token = jwt.sign( { _id: accessibleUser._id, email: accessibleUser.email, userName: accessibleUser.name }, SECRET, { expiresIn: 10000 });
             return chai.request( app )
-                .post( `/api/timelines/${ accessibleUser._id }`)
-                .send( { timelineTitle: "This is your new Timeline" } )               
-                .set( 'Authorization', `Bearer ${ token }` )
-                .then( ( res ) => {
-                    expect( res ).to.be.json; 
-                })
-        });
-    });
-
-
-    
-    describe( "entry update", () => {
-        it( 'should produce the required timeline by id', () => {
-            const token = jwt.sign( { _id: accessibleUser._id, email: accessibleUser.email, userName: accessibleUser.name }, SECRET, { expiresIn: 10000 });
-            return chai.request( app )
-                .post( '/api/timelines' )
-                .send( { timelineId: accessibleTimelineId } )
-                .set( 'Authorization', `Bearer ${ token }` )
-                .then( ( res ) => {
-                    expect( res ).to.be.json; 
-                })
-        })
-    })
-
-    describe( "entry deleted", () => {
-        it( 'should produce the required timeline by id', () => {
-            const token = jwt.sign( { _id: accessibleUser._id, email: accessibleUser.email, userName: accessibleUser.name }, SECRET, { expiresIn: 10000 });
-            return chai.request( app )
-                .post( '/api/timelines' )
-                .send( { timelineId: accessibleTimelineId } )
-                .set( 'Authorization', `Bearer ${ token }` )
-                .then( ( res ) => {
-                    expect( res ).to.be.json; 
-                })
-        })
-    })
-
-
-*/
-
+            .put( `/api/entries/${ desiredEnpoint }` )
+            .set( 'Authorization', `Bearer ${ secondToken }` )
+            .send( secondTestEntry )
+            .then( res => {
+                expect( res ).to.be.json;
+            } )
+        } );
+    } );
+});
 
 
