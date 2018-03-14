@@ -13,9 +13,8 @@ mongoimport --db timelinesDb --collection users --drop --file ./users.json
 
 
 Remaining:
-JWT
 
 Styling
 
-
+delete timelines ( delete users? ) 
 

@@ -10,7 +10,7 @@ const { user } = require('../models/userModel');
 chai.use( chaiHttp );
 
 const { app, runServer, closeServer } = require( '../index' );
-const { PORT, TEST_DATABASE_URL, TEST_SECRET } = require( '../Config/config' );
+const { PORT, TEST_DATABASE_URL, SECRET } = require( '../Config/config' );
 
 describe( "Tests the User Router functionality", () => {
     
@@ -18,7 +18,7 @@ describe( "Tests the User Router functionality", () => {
 
     function tearDownDb() {   
         return new Promise ((resolve, reject) => {     
-            console.warn('Deleting database');     
+            console.warn('Deleting users database');     
             mongoose.connection.dropDatabase()       
             .then(result => resolve(result))       
             .catch(err => reject(err));   }); 
@@ -27,6 +27,10 @@ describe( "Tests the User Router functionality", () => {
     before( () => {
         console.log( 'Beginning User specific tests on port and url', PORT, TEST_DATABASE_URL );
         runServer( PORT, TEST_DATABASE_URL )
+    } );
+
+
+    beforeEach( () => {
         const testUser = {
             name: "HEY MAN!",
             email: "test@here.com",
@@ -39,10 +43,15 @@ describe( "Tests the User Router functionality", () => {
                 console.log( 'test user created: ' ) 
             } )
             .catch( console.log( "Problems...nothing but problems" ) );
-    } );
+    })
+
+    afterEach( () => {
+        tearDownDb();
+    });
+
+
 
     after( () => {
-        tearDownDb();
         closeServer( TEST_DATABASE_URL );
     } ); 
 
@@ -85,14 +94,12 @@ describe( "Tests the User Router functionality", () => {
         });
 
         it( "should return basic information if the user has a token", ( ) => {
-            const token = jwt.sign( { _id: accessibleUser._id, email: accessibleUser.email, userName: accessibleUser.name }, TEST_SECRET, { expiresIn: 10000 });
-            console.log( 'accessible user with token: ', token );
+            const token = jwt.sign( { _id: accessibleUser._id, email: accessibleUser.email, userName: accessibleUser.name }, SECRET, { expiresIn: 10000 });
 
             return chai.request( app )
                 .get( "/api/users/basicInfo" )
                 .set( 'Authorization', `Bearer ${ token }` )
                 .then( ( res ) => {
-                    console.log( 'whats up: ', res )
                     expect( res ).to.be.json;
                 })
         })
