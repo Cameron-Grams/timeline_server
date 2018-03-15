@@ -1,4 +1,9 @@
 language: node_js
 node_js: node
-
-
+deploy:
+  provider: heroku
+  api_key:
+    secure: AwTgo4AvMmZjL7Imrgr7k7U13DDlALrWFCeH6SouyPBdSVry9ftt5Ac+qTszLJkyTrQ31Cn6lhrcv8QtEz2kFc0pfVWp8VZKyIzHdFLrBLCm8fhXA/BWMVnA98NNnArJRrILu3SRt3jLUBX4LvoC7BmtEKEI4YPcd4VID0RdqvYnGccQfgd+rmjIQqm5s79godXNHtfOYSeTPtfS1odTs0pOG5zZX6qHme1MO1bQ1zFrcZxme3EhKlc8qlQ2XM0jX+HFA4x5vSFMCOS3QcusOE5JgXlN45WPJPCoY5e3nwwntmGeOMsINlW7sIinMNv6TQnDjHWNh/L5wekAirvjs2Wlzx/96LFecXoygIKPjBFmxXUS9ziWe/dA1aQzRtfBESwG1ITKlG2WGAooQCnqs2xwJnPhcPh/blFWh5jznXx5+AHj0AyUVVX2nLC3qYrDsFw05B5XFfdCv2tgQKhiHKrk5HFYXzRMMbNdd6aCW/eHRqxIGozIZS/MWUHVEf660Ak3vIG2RwqKyJz1rBgwWDoKzq5P7CiMmoBKB72vYq+DmyXgYBmaCuIKKl1GfWXoWGlhwC00Ju46pjNuaa6g/D2ZQWb/8nWb+S49L/RWP5IJ6ty7c5NpaKATH/ncOAYCjrD/HjRV04htTbTs2wCLfG39JEwj+UnsOn2gYgUIEVc=
+  app: aqueous-fjord-19217
+  on:
+    repo: Cameron-Grams/timeline_server
