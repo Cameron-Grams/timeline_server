@@ -83,8 +83,8 @@ describe( "Tests the Entry Router functionality", () => {
         closeServer( TEST_DATABASE_URL );
     } ); 
 
+
     describe( " test for entry creation", () => {
-            
         it( 'should create a new timeline for the user', () => {
             const token = jwt.sign( { _id: accessibleUser._id, email: accessibleUser.email, userName: accessibleUser.name }, SECRET, { expiresIn: 10000 });
             const newRecordDate = Date.now();
@@ -110,7 +110,7 @@ describe( "Tests the Entry Router functionality", () => {
         });
     } );
 
-   describe( " test for entry update", () => {
+    describe( " test for entry update", () => {
         it( 'should update an entry for the user', () => {
             const secondToken = jwt.sign( { _id: accessibleUser._id, email: accessibleUser.email, userName: accessibleUser.name }, SECRET, { expiresIn: 10000 });
             const secondRecordDate = Date.now();
@@ -128,14 +128,29 @@ describe( "Tests the Entry Router functionality", () => {
             const desiredEnpoint = accessibleEntry._id;
 
             return chai.request( app )
-            .put( `/api/entries/${ desiredEnpoint }` )
-            .set( 'Authorization', `Bearer ${ secondToken }` )
-            .send( secondTestEntry )
-            .then( res => {
-                expect( res ).to.be.json;
-            } )
+                .put( `/api/entries/${ desiredEnpoint }` )
+                .set( 'Authorization', `Bearer ${ secondToken }` )
+                .send( secondTestEntry )
+                .then( res => {
+                    expect( res ).to.be.json;
+                } )
         } );
     } );
+
+    describe( "test for the deletion of entries", () => {
+        it( "should delete an entry on command", () => {
+
+            const token = jwt.sign( { _id: accessibleUser._id, email: accessibleUser.email, userName: accessibleUser.name }, SECRET, { expiresIn: 10000 });
+            return chai.request( app )
+                .delete( `/api/entries/${ accessibleEntry._id }` )
+                .set( 'Authorization', `Bearer ${ token }` )
+                .then( ( res ) => {
+                    expect( res ).to.have.status( 200 )
+                })
+
+
+        })
+    })
 });
 
 
