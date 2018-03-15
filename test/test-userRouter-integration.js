@@ -29,7 +29,6 @@ describe( "Tests the User Router functionality", () => {
         runServer( PORT, TEST_DATABASE_URL )
     } );
 
-
     beforeEach( () => {
         const testUser = {
             name: "HEY MAN!",
@@ -48,8 +47,6 @@ describe( "Tests the User Router functionality", () => {
     afterEach( () => {
         tearDownDb();
     });
-
-
 
     after( () => {
         closeServer( TEST_DATABASE_URL );
