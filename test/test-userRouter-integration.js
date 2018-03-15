@@ -44,13 +44,11 @@ describe( "Tests the User Router functionality", () => {
             .catch( console.log( "Problems...nothing but problems" ) );
     })
 
-    afterEach( () => {
-        tearDownDb();
-    });
+    afterEach( () => tearDownDb()); 
 
-    after( () => {
-        closeServer( TEST_DATABASE_URL );
-    } ); 
+
+    after( () => closeServer( TEST_DATABASE_URL ) );
+
 
 
 

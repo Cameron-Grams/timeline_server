@@ -51,12 +51,12 @@ describe( "Tests the Entry Router functionality", () => {
             source: "someplace"
         }
         
-        user.create( testUserObject )
+        return user.create( testUserObject )
         .then( newUser => {
             accessibleUser = newUser;
         } )
-
-        return timeline.create( {
+        .then( () => {  
+            return timeline.create( {
                 title: "first dummy TL",
                 Entries: [ ]
             } )
@@ -73,15 +73,13 @@ describe( "Tests the Entry Router functionality", () => {
                         })
                     } )
                 } )
+            } ) 
     })
 
-    afterEach( () => {
-       tearDownDb();
-    });
+    afterEach( () => tearDownDb() );
+    after( () => closeServer( TEST_DATABASE_URL ) ); 
 
-    after( () => {
-        closeServer( TEST_DATABASE_URL );
-    } ); 
+    
 
 
     describe( " test for entry creation", () => {

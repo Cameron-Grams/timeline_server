@@ -62,13 +62,9 @@ describe( "Tests the Timeline Router functionality", () => {
             .catch( console.log( "Problems...probably not news" ) );
     })
 
-    afterEach( () => {
-        tearDownDb();
-    });
+    afterEach( () => tearDownDb()); 
 
-    after( () => {
-        closeServer( TEST_DATABASE_URL );
-    } ); 
+    after( () =>  closeServer( TEST_DATABASE_URL ));
 
     describe( "timeline creation", () => {
             

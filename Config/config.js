@@ -11,7 +11,6 @@ exports.TEST_DATABASE_URL = process.env.TEST_DATABASE_URL ||
 exports.SECRET = process.env.SECRET || "thelastthingyoudeverguess"; 
 
 exports.TEST_SECRET = process.env.TEST_SECRET || "incrediblysneakypassword";
-
 exports.EXPIRATION = 600000000;
 
 
