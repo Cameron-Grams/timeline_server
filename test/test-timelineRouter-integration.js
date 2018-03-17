@@ -76,7 +76,20 @@ describe( "Tests the Timeline Router functionality", () => {
                 .set( 'Authorization', `Bearer ${ token }` )
                 .then( ( res ) => {
                     expect( res ).to.be.json; 
+                    expect( res.body ).to.have.property( "title" ); 
+                    expect( res.body ).to.have.property( "userId" ); 
+                    expect( res.body ).to.have.property( "entries" ); 
                 })
+        });
+
+        it( 'should requre authorization for a user to create a new timeline', () => {
+            return chai.request( app )
+                .post( `/api/timelines/${ accessibleUser._id }`)
+                .send( { timelineTitle: "This is your new Timeline" } )               
+                .then( ( res ) => {
+                    expect( res ).to.be.json; 
+                })
+                .catch( err => console.log( "failed to create timeline with error: ", err.status ) );
         });
     });
 
@@ -92,6 +105,16 @@ describe( "Tests the Timeline Router functionality", () => {
                 .then( ( res ) => {
                     expect( res ).to.be.json; 
                 })
+        })
+
+        it( 'should require authorization to produce the required timeline by id', () => {
+            return chai.request( app )
+                .post( '/api/timelines' )
+                .send( { timelineId: accessibleTimelineId } )
+                .then( ( res ) => {
+                    expect( res ).to.be.json; 
+                })
+                .catch( err => console.log( "request rejected with status: ", err.status ) );
         })
     })
 })

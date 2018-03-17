@@ -104,8 +104,34 @@ describe( "Tests the Entry Router functionality", () => {
             .send( newTestEntry )
             .then( res => {
                 expect( res ).to.be.json;
+                expect( res.body ).to.have.property( "title" );
+                expect( res.body ).to.have.property( "entries" );
             })
         });
+
+        it( 'should require a new timeline to have all fields', () => {
+            const token = jwt.sign( { _id: accessibleUser._id, email: accessibleUser.email, userName: accessibleUser.name }, SECRET, { expiresIn: 10000 });
+            const newRecordDate = Date.now();
+            const newTestEntry = {
+                timelineId: accessibleTimelineId,
+                title: "new something important",
+                what: "new something cool",
+                dateObject: newRecordDate,
+                source: "new someplace"
+            }
+    
+            return chai.request( app )
+            .post( `/api/entries/${ accessibleTimelineId }` )
+            .set( 'Authorization', `Bearer ${ token }` )
+            .send( newTestEntry )
+            .then( res => {
+                expect( res ).to.fail; 
+                res.should.have.status( 400 ) ;
+            })
+            .catch( err => console.log( "failed with status: ", err.status ) ); 
+        });
+
+
     } );
 
     describe( " test for entry update", () => {
@@ -131,8 +157,36 @@ describe( "Tests the Entry Router functionality", () => {
                 .send( secondTestEntry )
                 .then( res => {
                     expect( res ).to.be.json;
+                    expect( res.body ).to.have.keys( "title", "what", "date", "_id", "content", "where", "source", "who", "dateObject" );
                 } )
         } );
+
+        it( 'should fail to update an entry for the user without all fields', () => {
+            const secondToken = jwt.sign( { _id: accessibleUser._id, email: accessibleUser.email, userName: accessibleUser.name }, SECRET, { expiresIn: 10000 });
+            const secondRecordDate = Date.now();
+            const secondTestEntry = {
+                date: "1/2/2020",
+                who: "new someone",
+                where: "new somewhere",
+                content: "new something",
+                source: "new someplace"
+            };
+   
+            const desiredEnpoint = accessibleEntry._id;
+
+            return chai.request( app )
+                .put( `/api/entries/${ desiredEnpoint }` )
+                .set( 'Authorization', `Bearer ${ secondToken }` )
+                .send( secondTestEntry )
+                .then( res => {
+                    expect( res ).to.be.json;
+                } )
+                .catch( err => console.log( "failed with status: ", err.status ) ); 
+        } );
+
+
+
+
     } );
 
     describe( "test for the deletion of entries", () => {

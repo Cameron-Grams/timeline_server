@@ -69,7 +69,24 @@ describe( "Tests the User Router functionality", () => {
                         expect( res.body.status ).to.equal( "Success" );
                     } )
             })
-        });
+
+        it( 'requires all fields to register a new user', () => {
+            const newUserOne = {
+                userName: "new User One",
+            };
+
+            return chai.request( app )
+                .post( '/api/users/register' )
+                .send( newUserOne )
+                .then( function( res ){
+                    expect( res ).to.be.json;
+                    expect( res.body ).to.have.keys( "status", "message" );
+                    expect( res.body.status ).to.equal( "Success" );
+                } )
+                .catch( err => console.log( "rejected request with error ", err.message ) ); 
+        })
+
+    });
     
     describe( "Manages a known user", () => {
 
@@ -85,21 +102,47 @@ describe( "Tests the User Router functionality", () => {
                 .send( userRequest )
                 .then( function( res ){
                     expect( res ).to.be.json;
+                    expect( res.body ).to.have.property( "_id" );
+                    expect( res.body ).to.have.property( "name" );
+                    expect( res.body ).to.have.property( "timelines" );
                 })
+        });
+
+        it( "should not log in a user without proper credentials", () => {
+            const userRequest = {
+                userEmail: "test@here.com",
+            };
+
+            return chai.request( app )
+                .post( '/api/users/login' )
+                .send( userRequest )
+                .then( function( res ){
+                    expect( res ).to.be.json;
+                })
+                .catch( err => console.log( "failed to log in user with error ", err.message ) );
         });
 
         it( "should return basic information if the user has a token", ( ) => {
             const token = jwt.sign( { _id: accessibleUser._id, email: accessibleUser.email, userName: accessibleUser.name }, SECRET, { expiresIn: 10000 });
-
             return chai.request( app )
                 .get( "/api/users/basicInfo" )
                 .set( 'Authorization', `Bearer ${ token }` )
                 .then( ( res ) => {
                     expect( res ).to.be.json;
+                    expect( res.body).to.have.property( "_id" );
+                    expect( res.body).to.have.property( "name" );
+                    expect( res.body).to.have.property( "timelines" );
                 })
+        })
+
+        it( "should fail to return basic information if the user does not have a valid token", ( ) => {
+            return chai.request( app )
+                .get( "/api/users/basicInfo" )
+                .then( ( res ) => {
+                    expect( res ).to.be.json;
+                })
+                .catch( err => console.log( "failed to retrieve info with error ", err.message ) );
         })
     })
 })
 
-
-//  , name: testUser.name, timelines: testUser.userTimelines
