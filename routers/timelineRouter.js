@@ -56,7 +56,28 @@ router.route( '/timelines/:userId')
             }
         })
         .catch( err => res.status( 400 ).send( err ) )
-    })
+    } )
+
+
+router.route( '/timelines/:userId')
+    .delete( passport.authenticate('jwt', { session: false }), requiredFields( "timelineId"), (req, res) => { 
+        timeline.deleteOne( {
+            _id: req.body.timelineId
+        })
+        .then( ( ) => { 
+            user.findByIdAndUpdate( { _id: req.params.userId }, { $pull: { userTimelines: req.body.timelineId } }, { new: true } )
+                .then( ( user ) => {
+                    console.log( '[timelineRouter ] user found: ', user );  
+                    res.json( {
+                        _id: user._id,
+                        name: user.name,
+                        timelines: user.userTimelines
+                    });
+                } ); 
+        } )
+        .catch( err => res.status( 400 ).send( err ) );
+} )
+ 
      
 module.exports = router;
 
