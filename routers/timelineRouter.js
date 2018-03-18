@@ -67,7 +67,6 @@ router.route( '/timelines/:userId')
         .then( ( ) => { 
             user.findByIdAndUpdate( { _id: req.params.userId }, { $pull: { userTimelines: req.body.timelineId } }, { new: true } )
                 .then( ( user ) => {
-                    console.log( '[timelineRouter ] user found: ', user );  
                     res.json( {
                         _id: user._id,
                         name: user.name,
