@@ -44,7 +44,7 @@ router.route('/users/login')
                 });
             }  )
         })
-        .catch( err => res.status(400).json( err ) );
+        .catch( err => res.status(400).json( { generalMessage: 'Email or password is incorrect' } ) );
     });
 
 router.route( '/users/basicInfo' )
