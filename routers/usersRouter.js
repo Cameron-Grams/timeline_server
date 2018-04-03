@@ -45,7 +45,7 @@ router.route('/users/login')
             }  )
             .catch( err => res.status( 400 ).json( {status: "Failed", message: "User not found" } ) )
         })
-        .catch( err => res.status(400).json( { generalMessage: 'Email or password is incorrect' } ) );
+        .catch( err => res.status(400).json( { message: 'Email or password is incorrect' } ) );
     });
 
 router.route( '/users/basicInfo' )
