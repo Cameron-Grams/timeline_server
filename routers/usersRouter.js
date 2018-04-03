@@ -23,7 +23,7 @@ router.route('/users/login')
             .then( ( isAuthorized ) => {
                 if (!isAuthorized) {
                     return res.status(400).json({
-                        generalMessage: 'Email or password is incorrect',
+                        message: 'Email or password is incorrect',
                     });
                 }
                 const tokenPayload = {
@@ -43,6 +43,7 @@ router.route('/users/login')
                     timelines: foundUser.userTimelines
                 });
             }  )
+            .catch( err => res.status( 400 ).json( {status: "Failed", message: "User not found" } ) )
         })
         .catch( err => res.status(400).json( { generalMessage: 'Email or password is incorrect' } ) );
     });
